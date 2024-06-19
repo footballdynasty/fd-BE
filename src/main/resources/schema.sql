@@ -1,13 +1,13 @@
-CREATE TABLE standings
+CREATE TABLE IF NOT EXISTS team
 (
-    id UUID DEFAULT gen_random_uuid (),
-    team_id UUID NOT NULL,
+    id UUID default gen_random_uuid (),
+    "name" VARCHAR NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE team
+CREATE TABLE IF NOT EXISTS standings
 (
-    id UUID default gen_random_uuid (),
-    team_name VARCHAR NOT NULL,
+    id UUID DEFAULT gen_random_uuid (),
+    team_id UUID references team(id),
     PRIMARY KEY (id)
 );
