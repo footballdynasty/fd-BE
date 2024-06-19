@@ -1,6 +1,5 @@
-package com.critchlow.footballdynasty.dto;
+package com.critchlow.footballdynasty.model;
 
-import com.critchlow.footballdynasty.model.Team;
 import jakarta.persistence.*;
 
 import java.util.UUID;
