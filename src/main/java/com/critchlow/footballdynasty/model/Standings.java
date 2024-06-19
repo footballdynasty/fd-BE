@@ -2,6 +2,7 @@ package com.critchlow.footballdynasty.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -10,7 +11,8 @@ public class Standings {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "team_id", referencedColumnName = "id")
-    public Team team;
+    @OneToMany(mappedBy = "id")
+    public List<Team> team;
+
+    public int year;
 }
