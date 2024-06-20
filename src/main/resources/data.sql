@@ -6,3 +6,6 @@ INSERT INTO standings(id, team_id, year, wins, losses) values('5b760801-1e57-428
 
 INSERT INTO team(id, name, coach, conference) values('88260b66-3576-476c-b02c-92f4a58c531b', 'NthDemo', 'Darin', 'MWC') ON CONFLICT DO NOTHING;
 INSERT INTO standings(id, team_id, year, wins, losses) values('ac9c807e-69fb-43ae-a2a6-ba8505c2a157','88260b66-3576-476c-b02c-92f4a58c531b', 2023, 16, 0) ON CONFLICT DO NOTHING;
+
+INSERT INTO achievements(description, reward, date_completed) values('An example achievement', 'One schedule change', 1796929477);
+INSERT INTO achievements(description, reward, date_completed) values('Another example achievement', 'One schedule change', 1719833117);
