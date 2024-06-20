@@ -18,6 +18,6 @@ public class Standings {
     public int year;
     public int wins;
     public int losses;
-    public int rank;
-    public int recieving_votes;
+    public Integer rank;
+    public Integer receiving_votes;
 }
