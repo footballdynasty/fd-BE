@@ -16,4 +16,8 @@ public class Standings {
     public Team team;
 
     public int year;
+    public int wins;
+    public int losses;
+    public int rank;
+    public int recieving_votes;
 }
