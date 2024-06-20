@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class StandingsController {
     }
 
     @GetMapping("/standings")
-    public ResponseEntity<List<Standings>> getStandings(){
-        return new ResponseEntity<>(standingsService.getStandings(), HttpStatus.OK);
+    public ResponseEntity<List<Standings>> getStandings(@RequestParam(required = false) Integer year){
+        return new ResponseEntity<>(standingsService.getStandings(year), HttpStatus.OK);
     }
 }

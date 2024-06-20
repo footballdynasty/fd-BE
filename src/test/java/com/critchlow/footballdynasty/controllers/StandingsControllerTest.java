@@ -39,34 +39,43 @@ class StandingsControllerTest {
     @Test
     public void getStandings_thenResultReturned() throws Exception {
         //Given
-        Team testTeam = new Team();
-        UUID teamId = UUID.randomUUID();
-        testTeam.id = teamId;
-        testTeam.name = "Team Name";
-        testTeam.coach = "Team Coach";
-        testTeam.conference = "Team Conference";
-        Standings testStandings = new Standings();
-        int wins = 0;
-        int losses = 0;
-        Integer rank = null;
-        Integer receiving_votes = null;
-        UUID standingsId = UUID.randomUUID();
-        testStandings.id= standingsId;
-        testStandings.team = testTeam;
-        int year = 2024;
-        testStandings.year = year;
-        testStandings.wins = 0;
-        testStandings.losses = 0;
-        testStandings.rank = null;
-        testStandings.receiving_votes = null;
+        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
+
+        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
-        when(standingsRepository.findAll()).thenReturn(List.of(testStandings));
+        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
 
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standingsId, teamId, testTeam.name, testTeam.coach, testTeam.conference, year, wins, losses, rank, receiving_votes)));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s},{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standings1.id, team1.id, team1.name, team1.coach, team1.conference, 2024, 0, 0, null, null,standings2.id, team2.id, team2.name, team2.coach, team2.conference, 2023, 0, 0, null, null)));
         verify(standingsRepository).findAll();
+    }
+
+    private Team createTeam(String name, String coach, String conference){
+        Team testTeam = new Team();
+        UUID teamId = UUID.randomUUID();
+        testTeam.id = teamId;
+        testTeam.name = name;
+        testTeam.coach = coach;
+        testTeam.conference = conference;
+
+        return testTeam;
+    }
+
+    private Standings createStandings(Team team, int wins, int losses, int year, Integer rank, Integer receiving_votes){
+        Standings testStandings = new Standings();
+        UUID standingsId = UUID.randomUUID();
+        testStandings.id= standingsId;
+        testStandings.team = team;
+        testStandings.year = year;
+        testStandings.wins = wins;
+        testStandings.losses = losses;
+        testStandings.rank = rank;
+        testStandings.receiving_votes = receiving_votes;
+        return testStandings;
     }
 }
