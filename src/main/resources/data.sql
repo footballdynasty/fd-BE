@@ -1,2 +1,2 @@
-INSERT INTO team(id, name) values('177c56c8-d596-4477-8ee1-11e77e06ab9f', 'test') ON CONFLICT DO NOTHING;
-INSERT INTO standings(id, team_id, year) values('606e6bce-13de-4eff-aea9-bda3c8daf043','177c56c8-d596-4477-8ee1-11e77e06ab9f', 2024) ON CONFLICT DO NOTHING;
+INSERT INTO team(id, name, coach, conference) values('177c56c8-d596-4477-8ee1-11e77e06ab9f', 'test', 'Brody', 'MWC') ON CONFLICT DO NOTHING;
+INSERT INTO standings(id, team_id, year, wins, losses) values('606e6bce-13de-4eff-aea9-bda3c8daf043','177c56c8-d596-4477-8ee1-11e77e06ab9f', 2024, 16, 0) ON CONFLICT DO NOTHING;
