@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AchievementsService {
@@ -17,6 +18,7 @@ public class AchievementsService {
         this.achievementsRepository = achievementsRepository;
     }
 
+    public void deleteAchievement(UUID id) { achievementsRepository.delete(id); }
     public void createAchievements(Achievements me) { achievementsRepository.insert(me); }
     public List<Achievements> getAchievements() {
         return achievementsRepository.findAll();
