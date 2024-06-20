@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS achievements
     id UUID DEFAULT gen_random_uuid (),
     description VARCHAR NOT NULL,
     reward VARCHAR NOT NULL,
-    date_completed BIGINT NOT NULL
+    date_completed BIGINT
 )
