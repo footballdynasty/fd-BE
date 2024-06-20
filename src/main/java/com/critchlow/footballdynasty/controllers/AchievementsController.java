@@ -1,13 +1,9 @@
 package com.critchlow.footballdynasty.controllers;
 
 import com.critchlow.footballdynasty.dtos.AchievementsDto;
-import com.critchlow.footballdynasty.dtos.StandingsDto;
 import com.critchlow.footballdynasty.mappers.AchievementsMapper;
-import com.critchlow.footballdynasty.mappers.StandingsMapper;
 import com.critchlow.footballdynasty.model.Achievements;
-import com.critchlow.footballdynasty.model.Standings;
 import com.critchlow.footballdynasty.services.AchievementsService;
-import com.critchlow.footballdynasty.services.StandingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -45,5 +41,11 @@ public class AchievementsController {
 
         achievementsService.createAchievements(achievements);
         return new ResponseEntity<>(achievements, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteAchievement")
+    public HttpEntity<Object> createAchievement(@RequestParam UUID id) {
+        achievementsService.deleteAchievement(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

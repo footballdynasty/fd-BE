@@ -19,5 +19,10 @@ public interface AchievementsRepository extends JpaRepository<Achievements, UUID
             "(:#{#me.id}, :#{#me.description}, :#{#me.reward}, :#{#me.date_completed}) ON CONFLICT DO NOTHING",
             nativeQuery = true)
     void insert(@Param("me") Achievements me);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM achievements WHERE id = :id", nativeQuery = true)
+    void delete(@Param("id") UUID id);
 }
 
