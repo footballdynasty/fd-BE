@@ -5,6 +5,7 @@ import com.critchlow.footballdynasty.repository.AchievementsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ public class AchievementsService {
     }
 
     public void deleteAchievement(UUID id) { achievementsRepository.delete(id); }
+    public void updateAchievement(UUID id, String description, String reward, Long date_completed) { achievementsRepository.update(id, description, reward, date_completed); }
     public void createAchievements(Achievements me) { achievementsRepository.insert(me); }
     public List<Achievements> getAchievements() {
         return achievementsRepository.findAll();

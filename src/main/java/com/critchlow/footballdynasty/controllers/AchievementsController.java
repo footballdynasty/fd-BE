@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,12 @@ public class AchievementsController {
 
         achievementsService.createAchievements(achievements);
         return new ResponseEntity<>(achievements, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateAchievement")
+    public HttpEntity<Object> updateAchievement(@RequestParam String description, @RequestParam String reward, @RequestParam UUID id, @RequestParam Long date_completed) {
+        achievementsService.updateAchievement(id, description, reward, date_completed);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/deleteAchievement")
