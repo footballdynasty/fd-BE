@@ -45,7 +45,7 @@ public class AchievementsController {
     }
 
     @PostMapping("/updateAchievement")
-    public HttpEntity<Object> updateAchievement(@RequestParam String description, @RequestParam String reward, @RequestParam UUID id, @RequestParam Long date_completed) {
+    public HttpEntity<Object> updateAchievement(@RequestParam String description, @RequestParam String reward, @RequestParam UUID id, @RequestParam(required = false) Long date_completed) {
         achievementsService.updateAchievement(id, description, reward, date_completed);
         return new ResponseEntity<>(HttpStatus.OK);
     }
