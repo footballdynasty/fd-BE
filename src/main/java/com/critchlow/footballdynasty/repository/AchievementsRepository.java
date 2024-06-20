@@ -16,7 +16,7 @@ public interface AchievementsRepository extends JpaRepository<Achievements, UUID
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO achievements (id, description, reward, date_completed) VALUES" +
-            "(:#{#me.id}, :#{#me.description}, :#{#me.reward}, :#{#me.date_completed})",
+            "(:#{#me.id}, :#{#me.description}, :#{#me.reward}, :#{#me.date_completed}) ON CONFLICT DO NOTHING",
             nativeQuery = true)
     void insert(@Param("me") Achievements me);
 }
