@@ -11,8 +11,9 @@ public class Standings {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID id;
 
-    @OneToMany(mappedBy = "id")
-    public List<Team> team;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    public Team team;
 
     public int year;
 }

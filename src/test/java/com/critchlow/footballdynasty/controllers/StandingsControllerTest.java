@@ -46,7 +46,7 @@ class StandingsControllerTest {
         Standings testStandings = new Standings();
         UUID standingsId = UUID.randomUUID();
         testStandings.id= standingsId;
-        testStandings.team = List.of(testTeam);
+        testStandings.team = testTeam;
         int year = 2024;
         testStandings.year = year;
 
@@ -56,7 +56,7 @@ class StandingsControllerTest {
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":[{\"id\":\"%s\",\"name\":\"%s\"}],\"year\":%s}]",standingsId, teamId, testTeam.name, year)));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\"},\"year\":%s}]",standingsId, teamId, testTeam.name, year)));
         verify(standingsRepository).findAll();
     }
 }
