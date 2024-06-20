@@ -55,6 +55,62 @@ class StandingsControllerTest {
         verify(standingsRepository).findAll();
     }
 
+    @Test
+    public void getStandings_yearIsZero_thenResultReturned() throws Exception {
+        //Given
+        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
+
+        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
+
+        //When
+        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+
+        //Then
+        this.mockMvc.perform(get("/api/v1.0/standings?year=0"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s},{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standings1.id, team1.id, team1.name, team1.coach, team1.conference, 2024, 0, 0, null, null,standings2.id, team2.id, team2.name, team2.coach, team2.conference, 2023, 0, 0, null, null)));
+        verify(standingsRepository).findAll();
+    }
+    @Test
+    public void getStandings_yearIsTwentyTwentyThree_thenResultReturned() throws Exception {
+        //Given
+        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
+
+        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
+
+        //When
+        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+
+        //Then
+        this.mockMvc.perform(get("/api/v1.0/standings?year=2023"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standings2.id, team2.id, team2.name, team2.coach, team2.conference, 2023, 0, 0, null, null)));
+        verify(standingsRepository).findAll();
+    }
+
+    @Test
+    public void getStandings_yearIsOne_thenResultReturned() throws Exception {
+        //Given
+        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
+
+        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
+
+        //When
+        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+
+        //Then
+        this.mockMvc.perform(get("/api/v1.0/standings?year=1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+        verify(standingsRepository).findAll();
+    }
+
     private Team createTeam(String name, String coach, String conference){
         Team testTeam = new Team();
         UUID teamId = UUID.randomUUID();
