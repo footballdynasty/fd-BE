@@ -1,6 +1,6 @@
 package com.critchlow.footballdynasty.controllers;
 
-import com.critchlow.footballdynasty.dto.Standings;
+import com.critchlow.footballdynasty.model.Standings;
 import com.critchlow.footballdynasty.services.StandingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

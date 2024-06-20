@@ -1,7 +1,8 @@
 package com.critchlow.footballdynasty.controllers;
 
 
-import com.critchlow.footballdynasty.dto.Standings;
+import com.critchlow.footballdynasty.model.Standings;
+import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.StandingsRepository;
 import com.critchlow.footballdynasty.services.StandingsService;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -26,7 +29,7 @@ class StandingsControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     StandingsService standingsService;
 
     @MockBean
@@ -35,11 +38,25 @@ class StandingsControllerTest {
     
     @Test
     public void getStandings_thenResultReturned() throws Exception {
+        //Given
+        Team testTeam = new Team();
+        UUID teamId = UUID.randomUUID();
+        testTeam.id = teamId;
+        testTeam.name = "Team Name";
         Standings testStandings = new Standings();
-        testStandings.id= UUID.randomUUID();
+        UUID standingsId = UUID.randomUUID();
+        testStandings.id= standingsId;
+        testStandings.team = List.of(testTeam);
+        int year = 2024;
+        testStandings.year = year;
+
+        //When
         when(standingsRepository.findAll()).thenReturn(List.of(testStandings));
+
+        //Then
         this.mockMvc.perform(get("/api/v1.0/standings"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("berni eats loud"));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":[{\"id\":\"%s\",\"name\":\"%s\"}],\"year\":%s}]",standingsId, teamId, testTeam.name, year)));
+        verify(standingsRepository).findAll();
     }
 }
