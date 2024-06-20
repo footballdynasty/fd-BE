@@ -43,12 +43,22 @@ class StandingsControllerTest {
         UUID teamId = UUID.randomUUID();
         testTeam.id = teamId;
         testTeam.name = "Team Name";
+        testTeam.coach = "Team Coach";
+        testTeam.conference = "Team Conference";
         Standings testStandings = new Standings();
+        int wins = 0;
+        int losses = 0;
+        Integer rank = null;
+        Integer receiving_votes = null;
         UUID standingsId = UUID.randomUUID();
         testStandings.id= standingsId;
         testStandings.team = testTeam;
         int year = 2024;
         testStandings.year = year;
+        testStandings.wins = 0;
+        testStandings.losses = 0;
+        testStandings.rank = null;
+        testStandings.receiving_votes = null;
 
         //When
         when(standingsRepository.findAll()).thenReturn(List.of(testStandings));
@@ -56,7 +66,7 @@ class StandingsControllerTest {
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\"},\"year\":%s}]",standingsId, teamId, testTeam.name, year)));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\"},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standingsId, teamId, testTeam.name, testTeam.coach, testTeam.conference, year, wins, losses, rank, receiving_votes)));
         verify(standingsRepository).findAll();
     }
 }
