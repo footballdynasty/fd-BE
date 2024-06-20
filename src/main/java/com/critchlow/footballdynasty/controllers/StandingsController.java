@@ -1,5 +1,7 @@
 package com.critchlow.footballdynasty.controllers;
 
+import com.critchlow.footballdynasty.dtos.StandingsDto;
+import com.critchlow.footballdynasty.mappers.StandingsMapper;
 import com.critchlow.footballdynasty.model.Standings;
 import com.critchlow.footballdynasty.services.StandingsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,10 @@ public class StandingsController {
     }
 
     @GetMapping("/standings")
-    public ResponseEntity<List<Standings>> getStandings(@RequestParam(required = false) Integer year){
-        return new ResponseEntity<>(standingsService.getStandings(year), HttpStatus.OK);
+    public ResponseEntity<List<StandingsDto>> getStandings(@RequestParam(required = false) Integer year){
+        List<Standings> standings = standingsService.getStandings(year);
+        StandingsMapper mapper = new StandingsMapper();
+        List<StandingsDto> standingsDto = mapper.map(standings);
+        return new ResponseEntity<>(standingsDto, HttpStatus.OK);
     }
 }
