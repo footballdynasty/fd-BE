@@ -10,7 +10,7 @@ public class Standings {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     public Team team;
 

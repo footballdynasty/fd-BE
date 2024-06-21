@@ -2,9 +2,9 @@ package com.critchlow.footballdynasty.services;
 
 import com.critchlow.footballdynasty.model.Standings;
 import com.critchlow.footballdynasty.repository.StandingsRepository;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,9 +15,10 @@ public class StandingsService {
 
     @Autowired
     public StandingsService(StandingsRepository standingsRepository){
+
         this.standingsRepository = standingsRepository;
     }
-
+    @Transactional(readOnly = true)
     public List<Standings> getStandings(Integer year){
         if(year == null || year == 0){
             return standingsRepository.findAll();
