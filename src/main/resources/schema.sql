@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS team
     "name" VARCHAR NOT NULL,
     coach VARCHAR NOT NULL,
     conference VARCHAR NOT NULL,
+    is_human BOOLEAN DEFAULT false,
+    image_url VARCHAR,
     PRIMARY KEY (id)
 );
 
@@ -25,4 +27,23 @@ CREATE TABLE IF NOT EXISTS achievements
     description VARCHAR NOT NULL,
     reward VARCHAR NOT NULL,
     date_completed BIGINT
-)
+);
+
+CREATE TABLE IF NOT EXISTS schedule
+(
+    id UUID DEFAULT gen_random_uuid (),
+    year INTEGER NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS game
+(
+    id UUID DEFAULT gen_random_uuid (),
+    home_team_id UUID references team(id),
+    away_team_id UUID references team(id),
+    home_score INTEGER NOT NULL,
+    away_score INTEGER NOT NULL,
+    date DATE NOT NULL,
+    schedule_id UUID references schedule(id),
+    PRIMARY KEY (id)
+);

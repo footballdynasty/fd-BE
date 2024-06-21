@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class StandingsDto {
     public UUID id;
-    public Team team;
+    public TeamDto team;
     public int year;
     public int wins;
     public int losses;
