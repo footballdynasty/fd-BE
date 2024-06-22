@@ -9,7 +9,7 @@ on:
 
 env:
   DOCKER_URL: dcritchlow/football-dynasty
-  JAR_NAME: ${{ github.event.repository.name }}
+  JAR_NAME: footballdynasty
 
 jobs:
   test:
@@ -73,12 +73,3 @@ jobs:
             JAR_FILE=${{ steps.jar_params.outputs.RESOLVED_JAR_FILE }}
           tags: ${{ steps.meta.outputs.tags }}
           push: true
-      - name: Deploy to DEV
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: champ-oss/action-update-app@main
-        env:
-          GITHUB_APP_ID: '${{ secrets.GH_APP_ID }}'
-          GITHUB_INSTALLATION_ID: '${{ secrets.GH_INSTALLATION_ID }}'
-          GITHUB_APP_PRIVATE_KEY: '${{ secrets.GH_APP_PRIVATE_KEY }}'
-          GITHUB_REPO_TARGET: "terraform-dmv"
-          FILE_PATH_LIST: '["terraform/env/dev/dev-defaults.tfvars"]'
