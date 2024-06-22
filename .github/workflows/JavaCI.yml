@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_URL: dcritchlow/football-dynasty
+  DOCKER_URL: dcritchlow/football-dynasty-be
   JAR_NAME: footballdynasty
 
 jobs:
