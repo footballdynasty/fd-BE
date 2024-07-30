@@ -73,16 +73,10 @@ public class ScheduleControllerTest {
 
         //Then
         String expectedResponse = String.format(
-            "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}},"
-            + "{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
-            game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman,
-            team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman,
-            game1.date, game1.homeScore, game1.awayScore, schedule.id, schedule.year,
-            game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman,
-            team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman,
-            game2.date, game2.homeScore, game2.awayScore, schedule.id, schedule.year
+                "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
+                game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, schedule.id, schedule.year,
+                game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, schedule.id, schedule.year
         );
-
 
         this.mockMvc.perform(get("/api/v1.0/schedule?year=2024"))
                 .andExpect(status().isOk())
