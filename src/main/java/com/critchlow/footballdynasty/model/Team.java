@@ -14,4 +14,8 @@ public class Team {
     public String name;
     public String coach;
     public String conference;
+    @JoinColumn(name = "image_url")
+    public String imageUrl;
+    @JoinColumn(name = "is_human")
+    public boolean isHuman;
 }
