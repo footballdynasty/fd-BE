@@ -69,10 +69,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", false, "image1");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", false, "image2");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -88,10 +88,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_yearIsZero_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", true, "");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -106,10 +106,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_yearIsTwentyTwentyThree_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", true, "");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -125,10 +125,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_yearIsOne_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", true, "");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -141,13 +141,15 @@ class StandingsControllerTest {
         verify(standingsRepository).findAll();
     }
 
-    private Team createTeam(String name, String coach, String conference){
+    private Team createTeam(String name, String coach, String conference, Boolean isHuman, String imageUrl) {
         Team testTeam = new Team();
         UUID teamId = UUID.randomUUID();
         testTeam.id = teamId;
         testTeam.name = name;
         testTeam.coach = coach;
         testTeam.conference = conference;
+        testTeam.isHuman = isHuman;
+        testTeam.imageUrl = imageUrl;
 
         return testTeam;
     }

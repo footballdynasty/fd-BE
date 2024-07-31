@@ -1,6 +1,7 @@
 package com.critchlow.footballdynasty.mappers;
 
 import com.critchlow.footballdynasty.dtos.StandingsDto;
+import com.critchlow.footballdynasty.dtos.TeamDto;
 import com.critchlow.footballdynasty.model.Standings;
 
 import java.util.ArrayList;
@@ -12,15 +13,19 @@ public class StandingsMapper {
         for (Standings standing : standings) {
             StandingsDto standingsDto = new StandingsDto();
             standingsDto.id = standing.id;
-            standingsDto.team = standing.team;
             standingsDto.year = standing.year;
             standingsDto.wins = standing.wins;
             standingsDto.losses = standing.losses;
             standingsDto.rank = standing.rank;
             standingsDto.receiving_votes = standing.receiving_votes;
+            TeamDto teamDto = new TeamDto();
+            teamDto.id = standing.team.id;
+            teamDto.name = standing.team.name;
+            teamDto.coach = standing.team.coach;
+            teamDto.conference = standing.team.conference;
+            standingsDto.team = teamDto;
             standingsDtos.add(standingsDto);
         }
-
         return standingsDtos;
     }
 }
