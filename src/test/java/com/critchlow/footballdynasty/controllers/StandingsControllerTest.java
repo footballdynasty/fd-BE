@@ -72,7 +72,7 @@ class StandingsControllerTest {
         Team team1 = createTeam("test 1", "coach 1", "conference 1", false, "image1");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2", false, "image2"
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", false, "image2");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -88,10 +88,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_yearIsZero_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", true, "");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -106,10 +106,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_yearIsTwentyTwentyThree_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", true, "");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
@@ -125,10 +125,10 @@ class StandingsControllerTest {
     @Test
     public void getStandings_yearIsOne_thenResultReturned() throws Exception {
         //Given
-        Team team1 = createTeam("test 1", "coach 1", "conference 1");
+        Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "");
         Standings standings1 = createStandings(team1, 0, 0, 2024, null, null);
 
-        Team team2 = createTeam("test 2", "coach 2", "conference 2");
+        Team team2 = createTeam("test 2", "coach 2", "conference 2", true, "");
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
