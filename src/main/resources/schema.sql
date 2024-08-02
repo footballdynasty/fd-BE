@@ -2,9 +2,9 @@ CREATE TABLE IF NOT EXISTS team
 (
     id UUID default gen_random_uuid (),
     "name" VARCHAR NOT NULL,
-    coach VARCHAR NOT NULL,
-    username VARCHAR NOT NULL,
-    conference VARCHAR NOT NULL,
+    coach VARCHAR,
+    username VARCHAR,
+    conference VARCHAR,
     is_human BOOLEAN DEFAULT false,
     image_url VARCHAR,
     PRIMARY KEY (id)

@@ -37,23 +37,8 @@ public class ScheduleController {
 
     @PostMapping("/createGame")
     public HttpEntity<Object> createGame(@RequestParam String homeTeamName, @RequestParam String awayTeamName, @RequestParam String date, @RequestParam int year) {
-        Team homeTeam = scheduleService.getTeam(homeTeamName);
-        Team awayTeam =  scheduleService.getTeam(awayTeamName);
 
-        if (homeTeam == null || awayTeam == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        Game game = new Game();
-        game.id = UUID.randomUUID();
-
-        game.homeTeam = homeTeam;
-        game.awayTeam = awayTeam;
-
-        Schedule schedule = new Schedule();
-        schedule.year = year;
-
-        scheduleService.createGame( game.id, game.homeTeam, game.awayTeam, Date.valueOf(date), schedule);
+        Game game = scheduleService.createGame(homeTeamName, awayTeamName, date, year);
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 

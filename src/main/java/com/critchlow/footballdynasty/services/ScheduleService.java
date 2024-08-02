@@ -20,6 +20,8 @@ public class ScheduleService {
     private final TeamRepository teamRepository;
     private final ScheduleRepository scheduleRepository;
 
+    private static final String placeholderImage = "https://upload.wikimedia.org/wikipedia/commons/6/6f/EA_Sports_monochrome_logo.svg";
+
     @Autowired
     public ScheduleService(GameRepository gameRepository, TeamRepository teamRepository, ScheduleRepository scheduleRepository) {
         this.gameRepository = gameRepository;
@@ -43,17 +45,40 @@ public class ScheduleService {
         return team;
     }
 
-    public void createGame(UUID id, Team homeTeam, Team awayTeam, Date date, Schedule schedule) {
+    public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year) {
+        Team homeTeam = teamRepository.findTeamByName(homeTeamName);
+        Team awayTeam =  teamRepository.findTeamByName(awayTeamName);
+
+        if (homeTeam == null) {
+            homeTeam = new Team();
+            homeTeam.name = homeTeamName;
+            homeTeam.isHuman = false;
+            homeTeam.imageUrl = placeholderImage;
+            teamRepository.save(homeTeam);
+        }
+
+        if (awayTeam == null) {
+            awayTeam = new Team();
+            awayTeam.name = awayTeamName;
+            awayTeam.isHuman = false;
+            awayTeam.imageUrl = placeholderImage;
+            teamRepository.save(awayTeam);
+        }
+
+        Schedule schedule = new Schedule();
+        schedule.year = year;
         Schedule insertedSchedule = scheduleRepository.save(schedule);
 
         Game game = new Game();
-        game.id = id;
+        game.id = UUID.randomUUID();
         game.homeTeam = homeTeam;
         game.awayTeam = awayTeam;
-        game.date = date;
+        game.date = Date.valueOf(startDate);
         game.schedule = insertedSchedule;
-        gameRepository.insert(game);
+        Game insertedGame = gameRepository.save(game);
+        return insertedGame;
     }
+
 //    public void updateGame(UUID id, int home_score, int away_score) {
 //        gameRepository.update(id, home_score, away_score);
 //    }
