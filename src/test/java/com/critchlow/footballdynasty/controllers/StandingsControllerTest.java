@@ -19,10 +19,10 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -76,7 +76,10 @@ class StandingsControllerTest {
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
-        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+        List<Standings> standingsList = new ArrayList<>();
+        standingsList.add(standings1);
+        standingsList.add(standings2);
+        when(standingsRepository.findAll()).thenReturn(standingsList);
 
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings"))
@@ -95,7 +98,10 @@ class StandingsControllerTest {
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
-        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+        List<Standings> standingsList = new ArrayList<>();
+        standingsList.add(standings1);
+        standingsList.add(standings2);
+        when(standingsRepository.findAll()).thenReturn(standingsList);
 
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings?year=0"))
@@ -113,7 +119,10 @@ class StandingsControllerTest {
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
-        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+        List<Standings> standingsList = new ArrayList<>();
+        standingsList.add(standings1);
+        standingsList.add(standings2);
+        when(standingsRepository.findAll()).thenReturn(standingsList);
 
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings?year=2023"))
@@ -132,7 +141,10 @@ class StandingsControllerTest {
         Standings standings2 = createStandings(team2, 0, 0, 2023, null, null);
 
         //When
-        when(standingsRepository.findAll()).thenReturn(List.of(standings1, standings2));
+        List<Standings> standingsList = new ArrayList<>();
+        standingsList.add(standings1);
+        standingsList.add(standings2);
+        when(standingsRepository.findAll()).thenReturn(standingsList);
 
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings?year=1"))

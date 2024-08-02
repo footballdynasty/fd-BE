@@ -20,8 +20,8 @@ public class ScheduleMapper {
             gameDto.awayScore = game.awayScore;
 
             ScheduleDto scheduleDto = new ScheduleDto();
-            scheduleDto.id = game.schedule.id;
-            scheduleDto.year = game.schedule.year;
+            scheduleDto.id = game.week.id;
+            scheduleDto.year = game.week.year;
             gameDto.schedule = scheduleDto;
             gameDtos.add(gameDto);
         }
