@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS team
     id UUID default gen_random_uuid (),
     "name" VARCHAR NOT NULL,
     coach VARCHAR NOT NULL,
+    username VARCHAR NOT NULL,
     conference VARCHAR NOT NULL,
     is_human BOOLEAN DEFAULT false,
     image_url VARCHAR,
@@ -41,8 +42,8 @@ CREATE TABLE IF NOT EXISTS game
     id UUID DEFAULT gen_random_uuid (),
     home_team_id UUID references team(id),
     away_team_id UUID references team(id),
-    home_score INTEGER NOT NULL,
-    away_score INTEGER NOT NULL,
+    home_score INTEGER NOT NULL DEFAULT 0,
+    away_score INTEGER NOT NULL DEFAULT 0,
     date DATE NOT NULL,
     schedule_id UUID references schedule(id),
     PRIMARY KEY (id)

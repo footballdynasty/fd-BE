@@ -1,9 +1,7 @@
 package com.critchlow.footballdynasty.model;
 
 import jakarta.persistence.*;
-import org.apache.logging.log4j.util.Lazy;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,4 +16,16 @@ public class Team {
     public String imageUrl;
     @JoinColumn(name = "is_human")
     public boolean isHuman;
+
+    public Team(String id, String name, String coach, String conference, String imageUrl, boolean isHuman) {
+        this.id = UUID.fromString(id);
+        this.name = name;
+        this.coach = coach;
+        this.conference = conference;
+        this.imageUrl = imageUrl;
+        this.isHuman = isHuman;
+    }
+
+    public Team() {
+    }
 }
