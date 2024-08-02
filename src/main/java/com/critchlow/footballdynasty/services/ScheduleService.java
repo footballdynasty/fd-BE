@@ -5,6 +5,7 @@ import com.critchlow.footballdynasty.model.Schedule;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.GameRepository;
 import com.critchlow.footballdynasty.repository.ScheduleRepository;
+import com.critchlow.footballdynasty.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,11 +17,13 @@ import java.util.UUID;
 @Service
 public class ScheduleService {
     private final GameRepository gameRepository;
+    private final TeamRepository teamRepository;
     private final ScheduleRepository scheduleRepository;
 
     @Autowired
-    public ScheduleService(GameRepository gameRepository, ScheduleRepository scheduleRepository) {
+    public ScheduleService(GameRepository gameRepository, TeamRepository teamRepository, ScheduleRepository scheduleRepository) {
         this.gameRepository = gameRepository;
+        this.teamRepository = teamRepository;
         this.scheduleRepository = scheduleRepository;
     }
 
@@ -36,17 +39,19 @@ public class ScheduleService {
 
     @Transactional
     public Team getTeam(String name) {
-        Team team = scheduleRepository.findTeamByName(name);
+        Team team = teamRepository.findTeamByName(name);
         return team;
     }
 
     public void createGame(UUID id, Team homeTeam, Team awayTeam, Date date, Schedule schedule) {
+        Schedule insertedSchedule = scheduleRepository.save(schedule);
+
         Game game = new Game();
         game.id = id;
         game.homeTeam = homeTeam;
         game.awayTeam = awayTeam;
         game.date = date;
-        game.schedule = schedule;
+        game.schedule = insertedSchedule;
         gameRepository.insert(game);
     }
 //    public void updateGame(UUID id, int home_score, int away_score) {
