@@ -8,9 +8,9 @@ import java.util.UUID;
 
 @Entity
 @NamedEntityGraphs({
-        @NamedEntityGraph(name = "gameWithSchedule",
+        @NamedEntityGraph(name = "gameWithWeek",
                 attributeNodes = {
-                        @NamedAttributeNode("schedule"),
+                        @NamedAttributeNode("week"),
                         @NamedAttributeNode("homeTeam"),
                         @NamedAttributeNode("awayTeam")
 
@@ -21,6 +21,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     public UUID id;
+    public String gameId;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne(fetch = FetchType.LAZY)
     public Team homeTeam;
@@ -34,6 +35,11 @@ public class Game {
     @JoinColumn(name = "away_score")
     public int awayScore;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id")
-    public Schedule schedule;
+    @JoinColumn(name = "week_id")
+    public Week week;
+
+    public void createGameId(){
+        String gameId = homeTeam.name + awayTeam.name + week.year + week.weekNumber;
+        this.gameId = gameId.replaceAll("\\s+", "");
+    }
 }

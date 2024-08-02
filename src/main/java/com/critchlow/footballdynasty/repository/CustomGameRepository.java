@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CustomGameRepository {
     List<Game> findGames();
+    Game findGameById(String gameId);
 }

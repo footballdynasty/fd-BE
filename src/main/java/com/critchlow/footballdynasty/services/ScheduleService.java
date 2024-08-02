@@ -1,11 +1,14 @@
 package com.critchlow.footballdynasty.services;
 
 import com.critchlow.footballdynasty.model.Game;
-import com.critchlow.footballdynasty.model.Schedule;
+import com.critchlow.footballdynasty.model.Standings;
+import com.critchlow.footballdynasty.model.Week;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.GameRepository;
-import com.critchlow.footballdynasty.repository.ScheduleRepository;
+import com.critchlow.footballdynasty.repository.StandingsRepository;
+import com.critchlow.footballdynasty.repository.WeekRepository;
 import com.critchlow.footballdynasty.repository.TeamRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +21,17 @@ import java.util.UUID;
 public class ScheduleService {
     private final GameRepository gameRepository;
     private final TeamRepository teamRepository;
-    private final ScheduleRepository scheduleRepository;
+    private final WeekRepository weekRepository;
+    private final StandingsRepository standingsRepository;
 
     private static final String placeholderImage = "https://upload.wikimedia.org/wikipedia/commons/6/6f/EA_Sports_monochrome_logo.svg";
 
     @Autowired
-    public ScheduleService(GameRepository gameRepository, TeamRepository teamRepository, ScheduleRepository scheduleRepository) {
+    public ScheduleService(GameRepository gameRepository, TeamRepository teamRepository, WeekRepository weekRepository, StandingsRepository standingsRepository) {
         this.gameRepository = gameRepository;
         this.teamRepository = teamRepository;
-        this.scheduleRepository = scheduleRepository;
+        this.weekRepository = weekRepository;
+        this.standingsRepository = standingsRepository;
     }
 
     @Transactional(readOnly = true)
@@ -36,7 +41,7 @@ public class ScheduleService {
             return games;
         }
         List<Game> games =  gameRepository.findGames();
-        return games.stream().filter(g -> g.schedule.year == year).toList();
+        return games.stream().filter(g -> g.week.year == year).toList();
     }
 
     @Transactional
@@ -45,7 +50,11 @@ public class ScheduleService {
         return team;
     }
 
-    public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year) {
+    public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year, int weekNumber) {
+        return createGame(homeTeamName, awayTeamName, startDate, year, weekNumber, 0, 0);
+    }
+
+    public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year, int weekNumber, int homeScore, int awayScore) {
         Team homeTeam = teamRepository.findTeamByName(homeTeamName);
         Team awayTeam =  teamRepository.findTeamByName(awayTeamName);
 
@@ -65,23 +74,77 @@ public class ScheduleService {
             teamRepository.save(awayTeam);
         }
 
-        Schedule schedule = new Schedule();
-        schedule.year = year;
-        Schedule insertedSchedule = scheduleRepository.save(schedule);
+        Week weekFound = weekRepository.findWeekByWeekNumber(weekNumber);
+        if(weekFound == null){
+            weekFound = new Week();
+            weekFound.year = year;
+            weekFound.weekNumber = weekNumber;
+            weekRepository.save(weekFound);
+        }
 
         Game game = new Game();
         game.id = UUID.randomUUID();
         game.homeTeam = homeTeam;
         game.awayTeam = awayTeam;
         game.date = Date.valueOf(startDate);
-        game.schedule = insertedSchedule;
+        game.week = weekFound;
+        game.createGameId();
         Game insertedGame = gameRepository.save(game);
+        updateStandings(insertedGame);
         return insertedGame;
     }
 
-//    public void updateGame(UUID id, int home_score, int away_score) {
-//        gameRepository.update(id, home_score, away_score);
-//    }
+    private void updateStandings(Game insertedGame) {
+        List<Game> games = gameRepository.findGames();
+        List<Game> homeTeamGames = games.stream()
+                .filter(g -> g.homeTeam == insertedGame.homeTeam)
+                .toList();
+        List<Game> awayTeamGames = games.stream()
+                .filter(g -> g.awayTeam == insertedGame.awayTeam)
+                .toList();
+
+        int homeTeamWins = 0;
+        int awayTeamWins = 0;
+        int homeTeamLosses = 0;
+        int awayTeamLosses = 0;
+
+        for (Game game : homeTeamGames) {
+            if (game.homeScore > game.awayScore) {
+                homeTeamWins++;
+            } else if (game.homeScore < game.awayScore) {
+                homeTeamLosses++;
+            }
+        }
+        for (Game game : awayTeamGames) {
+            if (game.awayScore > game.homeScore) {
+                awayTeamWins++;
+            } else if (game.awayScore < game.homeScore) {
+                awayTeamLosses++;
+            }
+        }
+
+        Standings homeTeamStandings = standingsRepository.findByTeamName(insertedGame.homeTeam.name);
+        Standings awayTeamStandings = standingsRepository.findByTeamName(insertedGame.awayTeam.name);
+        homeTeamStandings.wins = homeTeamWins;
+        homeTeamStandings.losses = homeTeamLosses;
+        awayTeamStandings.wins = awayTeamWins;
+        awayTeamStandings.losses = awayTeamLosses;
+
+        standingsRepository.save(homeTeamStandings);
+        standingsRepository.save(awayTeamStandings);
+    }
+
+    public void updateGame(String gameId, int homeScore, int awayScore) {
+        Game gameFound = gameRepository.findGameById(gameId);
+        if (gameFound == null) {
+            throw new EntityNotFoundException("Game with id " + gameId + " not found");
+        }
+        gameFound.homeScore = homeScore;
+        gameFound.awayScore = awayScore;
+        gameRepository.save(gameFound);
+        updateStandings(gameFound);
+    }
+
 //    public void deleteGame(UUID id) {
 //        gameRepository.delete(id);
 //    }

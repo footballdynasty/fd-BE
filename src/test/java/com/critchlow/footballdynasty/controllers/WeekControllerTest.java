@@ -1,7 +1,7 @@
 package com.critchlow.footballdynasty.controllers;
 
 import com.critchlow.footballdynasty.model.Game;
-import com.critchlow.footballdynasty.model.Schedule;
+import com.critchlow.footballdynasty.model.Week;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.GameRepository;
 import com.critchlow.footballdynasty.services.ScheduleService;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ScheduleControllerTest {
+public class WeekControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -67,9 +67,9 @@ public class ScheduleControllerTest {
         Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "image1");
         Team team2 = createTeam("test 2", "coach 2", "conference 2", false, "image2");
 
-        Schedule schedule = createSchedule(2024);
-        Game game1 = createGame(team1, team2, Date.valueOf("2024-01-01"), 0, 0, schedule);
-        Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, schedule);
+        Week week = createWeek(2024, 1);
+        Game game1 = createGame(team1, team2, Date.valueOf("2024-01-01"), 0, 0, week);
+        Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, week);
 
         //When
         when(gameRepository.findGames()).thenReturn(List.of(game1, game2));
@@ -77,8 +77,8 @@ public class ScheduleControllerTest {
         //Then
         String expectedResponse = String.format(
                 "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
-                game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, schedule.id, schedule.year,
-                game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, schedule.id, schedule.year
+                game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, week.id, week.year,
+                game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, week.id, week.year
         );
 
         this.mockMvc.perform(get("/api/v1.0/schedule"))
@@ -91,9 +91,9 @@ public class ScheduleControllerTest {
         Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "image1");
         Team team2 = createTeam("test 2", "coach 2", "conference 2", false, "image2");
 
-        Schedule schedule = createSchedule(2024);
-        Game game1 = createGame(team1, team2, Date.valueOf("2024-01-01"), 0, 0, schedule);
-        Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, schedule);
+        Week week = createWeek(2024, 1);
+        Game game1 = createGame(team1, team2, Date.valueOf("2024-01-01"), 0, 0, week);
+        Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, week);
 
         //When
         when(gameRepository.findGames()).thenReturn(List.of(game1, game2));
@@ -101,8 +101,8 @@ public class ScheduleControllerTest {
         //Then
         String expectedResponse = String.format(
                 "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
-                game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, schedule.id, schedule.year,
-                game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, schedule.id, schedule.year
+                game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, week.id, week.year,
+                game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, week.id, week.year
         );
 
         this.mockMvc.perform(get("/api/v1.0/schedule?year=2024"))
@@ -115,9 +115,9 @@ public class ScheduleControllerTest {
         Team team1 = createTeam("test 1", "coach 1", "conference 1", true, "image1");
         Team team2 = createTeam("test 2", "coach 2", "conference 2", false, "image2");
 
-        Schedule schedule = createSchedule(2024);
-        Game game1 = createGame(team1, team2, Date.valueOf("2024-01-01"), 0, 0, schedule);
-        Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, schedule);
+        Week week = createWeek(2024, 1);
+        Game game1 = createGame(team1, team2, Date.valueOf("2024-01-01"), 0, 0, week);
+        Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, week);
 
         //When
         when(gameRepository.findGames()).thenReturn(List.of(game1, game2));
@@ -143,7 +143,7 @@ public class ScheduleControllerTest {
         return testTeam;
     }
 
-    private Game createGame(Team homeTeam, Team awayTeam, Date date, int homeScore, int awayScore, Schedule schedule) {
+    private Game createGame(Team homeTeam, Team awayTeam, Date date, int homeScore, int awayScore, Week week) {
         Game testGame = new Game();
         UUID gameId = UUID.randomUUID();
         testGame.id = gameId;
@@ -152,17 +152,18 @@ public class ScheduleControllerTest {
         testGame.date = date;
         testGame.homeScore = homeScore;
         testGame.awayScore = awayScore;
-        testGame.schedule = schedule;
+        testGame.week = week;
 
         return testGame;
     }
-    private Schedule createSchedule(int year) {
-        Schedule testSchedule = new Schedule();
-        UUID scheduleId = UUID.randomUUID();
-        testSchedule.id = scheduleId;
-        testSchedule.year = year;
+    private Week createWeek(int year, int weekNumber) {
+        Week testWeek = new Week();
+        UUID weekId = UUID.randomUUID();
+        testWeek.id = weekId;
+        testWeek.year = year;
+        testWeek.weekNumber = weekNumber;
 
-        return testSchedule;
+        return testWeek;
     }
 }
 

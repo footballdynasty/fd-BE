@@ -15,7 +15,7 @@ public interface GameRepository extends JpaRepository<Game, UUID>, CustomGameRep
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO game (home_team_id, away_team_id, date, schedule_id) VALUES" +
-            "(:#{#me.homeTeam.id}, :#{#me.awayTeam.id}, :#{#me.date}, :#{#me.schedule.id}) ON CONFLICT DO NOTHING",
+            "(:#{#me.homeTeam.id}, :#{#me.awayTeam.id}, :#{#me.date}, :#{#me.week.id}) ON CONFLICT DO NOTHING",
             nativeQuery = true)
     void insert(@Param("me") Game me);
 

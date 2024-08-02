@@ -14,4 +14,8 @@ public interface StandingsRepository extends JpaRepository <Standings, UUID> {
     @Query("SELECT standings FROM Standings standings " +
     "JOIN FETCH standings.team team")
     List<Standings> findAll();
+
+    @Query("SELECT standings FROM Standings standings " +
+            "JOIN FETCH standings.team team where team.name = :teamName")
+    Standings findByTeamName(String teamName);
 }
