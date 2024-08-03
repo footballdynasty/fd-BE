@@ -86,6 +86,8 @@ public class ScheduleService {
         game.awayTeam = awayTeam;
         game.date = Date.valueOf(startDate);
         game.week = weekFound;
+        game.homeScore = homeScore;
+        game.awayScore = awayScore;
         game.createGameId();
         Game insertedGame = gameRepository.save(game);
         updateStandings(insertedGame);
@@ -93,7 +95,7 @@ public class ScheduleService {
     }
 
     private void updateStandings(Game insertedGame) {
-        List<Game> games = gameRepository.findGames();
+        List<Game> games = gameRepository.findGamesByYear(insertedGame.week.year);
         List<Game> homeTeamGames = games.stream()
                 .filter(g -> g.homeTeam == insertedGame.homeTeam)
                 .toList();
@@ -121,15 +123,18 @@ public class ScheduleService {
             }
         }
 
-        Standings homeTeamStandings = standingsRepository.findByTeamName(insertedGame.homeTeam.name);
-        Standings awayTeamStandings = standingsRepository.findByTeamName(insertedGame.awayTeam.name);
-        homeTeamStandings.wins = homeTeamWins;
-        homeTeamStandings.losses = homeTeamLosses;
-        awayTeamStandings.wins = awayTeamWins;
-        awayTeamStandings.losses = awayTeamLosses;
-
-        standingsRepository.save(homeTeamStandings);
-        standingsRepository.save(awayTeamStandings);
+        Standings homeTeamStandings = standingsRepository.findByTeamNameAndYear(insertedGame.homeTeam.name, insertedGame.week.year);
+        Standings awayTeamStandings = standingsRepository.findByTeamNameAndYear(insertedGame.awayTeam.name, insertedGame.week.year);
+        if(homeTeamStandings != null){
+            homeTeamStandings.wins = homeTeamWins;
+            homeTeamStandings.losses = homeTeamLosses;
+            standingsRepository.save(homeTeamStandings);
+        }
+        if(awayTeamStandings != null){
+            awayTeamStandings.wins = awayTeamWins;
+            awayTeamStandings.losses = awayTeamLosses;
+            standingsRepository.save(awayTeamStandings);
+        }
     }
 
     public void updateGame(String gameId, int homeScore, int awayScore) {

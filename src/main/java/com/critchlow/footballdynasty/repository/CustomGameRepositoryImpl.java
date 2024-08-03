@@ -24,6 +24,19 @@ public class CustomGameRepositoryImpl implements CustomGameRepository {
     }
 
     @Override
+    public List<Game> findGamesByYear(int year) {
+        String findGamesQuery = """
+                SELECT game FROM Game game where game.week.year = :year
+                """;
+        EntityGraph graph = em.getEntityGraph("gameWithWeek");
+        List<Game> games = em.createQuery(findGamesQuery, Game.class)
+                .setHint("jakarta.persistence.fetchgraph", graph)
+                .setParameter("year", year)
+                .getResultList();
+        return games;
+    }
+
+    @Override
     public Game findGameById(String gameId) {
         String findGamesQuery = """
                 SELECT game FROM Game game where game.gameId=:gameId
