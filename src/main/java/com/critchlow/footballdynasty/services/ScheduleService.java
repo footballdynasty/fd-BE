@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,12 +35,13 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<Game> getSchedule(Integer year) {
         if(year == null || year == 0){
-            List<Game> games = gameRepository.findGames();
-            games.sort(new GameComparator());
-            return games;
+            int largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(LocalDateTime.now().getYear());
+            List<Game> games = gameRepository.findGamesByYear(LocalDateTime.now().getYear());
+            return games.stream().filter(g -> g.week.weekNumber == largesWeekNumberForCurrentYear).sorted(new GameComparator()).toList();
         }
-        List<Game> games =  gameRepository.findGames();
-        return games.stream().filter(g -> g.week.year == year).sorted(new GameComparator()).toList();
+        int largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(year);
+        List<Game> games =  gameRepository.findGamesByYear(year);
+        return games.stream().filter(g -> g.week.weekNumber == largesWeekNumberForCurrentYear).sorted(new GameComparator()).toList();
     }
 
     @Transactional
