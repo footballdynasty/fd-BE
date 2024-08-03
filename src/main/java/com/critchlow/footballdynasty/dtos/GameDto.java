@@ -12,5 +12,7 @@ public class GameDto {
     public Date date;
     public int homeScore;
     public int awayScore;
+    public int homeTeamRank;
+    public int awayTeamRank;
     public ScheduleDto schedule;
 }

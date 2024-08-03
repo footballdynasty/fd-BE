@@ -18,6 +18,8 @@ public class ScheduleMapper {
             gameDto.date = game.date;
             gameDto.homeScore = game.homeScore;
             gameDto.awayScore = game.awayScore;
+            gameDto.homeTeamRank = game.homeTeamRank;
+            gameDto.awayTeamRank = game.awayTeamRank;
 
             ScheduleDto scheduleDto = new ScheduleDto();
             scheduleDto.id = game.week.id;
