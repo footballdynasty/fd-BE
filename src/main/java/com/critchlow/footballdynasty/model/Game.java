@@ -34,6 +34,8 @@ public class Game {
     public int homeScore;
     @JoinColumn(name = "away_score")
     public int awayScore;
+    public int homeTeamRank;
+    public int awayTeamRank;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "week_id")
     public Week week;

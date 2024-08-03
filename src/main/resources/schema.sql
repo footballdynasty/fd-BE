@@ -47,6 +47,8 @@ CREATE TABLE IF NOT EXISTS game
     home_score INTEGER NOT NULL DEFAULT 0,
     away_score INTEGER NOT NULL DEFAULT 0,
     date DATE NOT NULL,
+    home_team_rank INTEGER NULL,
+    away_team_rank INTEGER NULL,
     week_id UUID references week(id),
     PRIMARY KEY (id)
 );

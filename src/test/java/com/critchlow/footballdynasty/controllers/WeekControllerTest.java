@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,11 +73,14 @@ public class WeekControllerTest {
         Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, week);
 
         //When
-        when(gameRepository.findGames()).thenReturn(List.of(game1, game2));
+        List<Game> games = new ArrayList<>();
+        games.add(game1);
+        games.add(game2);
+        when(gameRepository.findGames()).thenReturn(games);
 
         //Then
         String expectedResponse = String.format(
-                "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
+                "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"homeTeamRank\":0,\"awayTeamRank\":0,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"homeTeamRank\":0,\"awayTeamRank\":0,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
                 game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, week.id, week.year,
                 game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, week.id, week.year
         );
@@ -100,7 +104,7 @@ public class WeekControllerTest {
 
         //Then
         String expectedResponse = String.format(
-                "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
+                "[{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"homeTeamRank\":0,\"awayTeamRank\":0,\"schedule\":{\"id\":\"%s\",\"year\":%s}},{\"id\":\"%s\",\"homeTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"awayTeam\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"isHuman\":%s,\"username\":\"\"},\"date\":\"%s\",\"homeScore\":%s,\"awayScore\":%s,\"homeTeamRank\":0,\"awayTeamRank\":0,\"schedule\":{\"id\":\"%s\",\"year\":%s}}]",
                 game1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, game1.date, game1.homeScore, game1.awayScore, week.id, week.year,
                 game2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, game2.date, game2.homeScore, game2.awayScore, week.id, week.year
         );
@@ -139,6 +143,7 @@ public class WeekControllerTest {
         testTeam.conference = conference;
         testTeam.isHuman = isHuman;
         testTeam.imageUrl = imageUrl;
+        testTeam.username = "";
 
         return testTeam;
     }

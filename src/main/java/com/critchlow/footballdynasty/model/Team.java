@@ -16,6 +16,7 @@ public class Team {
     public String imageUrl;
     @JoinColumn(name = "is_human")
     public boolean isHuman;
+    public String username;
 
     public Team(String id, String name, String coach, String conference, String imageUrl, boolean isHuman) {
         this.id = UUID.fromString(id);

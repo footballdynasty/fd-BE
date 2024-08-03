@@ -1,9 +1,6 @@
 package com.critchlow.footballdynasty.services;
 
-import com.critchlow.footballdynasty.model.Game;
-import com.critchlow.footballdynasty.model.Standings;
-import com.critchlow.footballdynasty.model.Week;
-import com.critchlow.footballdynasty.model.Team;
+import com.critchlow.footballdynasty.model.*;
 import com.critchlow.footballdynasty.repository.GameRepository;
 import com.critchlow.footballdynasty.repository.StandingsRepository;
 import com.critchlow.footballdynasty.repository.WeekRepository;
@@ -38,10 +35,11 @@ public class ScheduleService {
     public List<Game> getSchedule(Integer year) {
         if(year == null || year == 0){
             List<Game> games = gameRepository.findGames();
+            games.sort(new GameComparator());
             return games;
         }
         List<Game> games =  gameRepository.findGames();
-        return games.stream().filter(g -> g.week.year == year).toList();
+        return games.stream().filter(g -> g.week.year == year).sorted(new GameComparator()).toList();
     }
 
     @Transactional
