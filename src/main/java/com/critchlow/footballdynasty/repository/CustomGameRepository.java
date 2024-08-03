@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface CustomGameRepository {
     List<Game> findGames();
+    List<Game> findGamesByYear(int year);
     Game findGameById(String gameId);
 }
