@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.sql.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -43,5 +44,15 @@ public class Game {
     public void createGameId(){
         String gameId = homeTeam.name + awayTeam.name + week.year + week.weekNumber;
         this.gameId = gameId.replaceAll("\\s+", "");
+    }
+
+    public Optional<Team> withUserCoach(){
+        return homeTeam.coach != null
+                ? Optional.of(homeTeam)
+                : awayTeam.coach != null
+                ? Optional.of(awayTeam) : Optional.empty();
+    }
+    public String getAwayTeam(){
+        return awayTeam.name;
     }
 }

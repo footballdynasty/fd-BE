@@ -41,11 +41,26 @@ public class CustomGameRepositoryImpl implements CustomGameRepository {
         String findGamesQuery = """
                 SELECT game FROM Game game where game.gameId=:gameId
                 """;
-        EntityGraph graph = em.getEntityGraph("gameWithWeek");
+        EntityGraph<?> graph = em.getEntityGraph("gameWithWeek");
         Game game = em.createQuery(findGamesQuery, Game.class)
                 .setHint("jakarta.persistence.fetchgraph", graph)
                 .setParameter("gameId", gameId)
                 .getSingleResult();
         return game;
+    }
+
+    @Override
+    public List<Game> findUserTeams(int year) {
+        String findHomeTeamNames = """
+                SELECT game FROM Game game where game.week.year = :year
+                and game.homeTeam.coach is not null or 
+                game.awayTeam.coach is not null
+                """;
+        EntityGraph<?> graph = em.getEntityGraph("gameWithWeek");
+        List<Game> games = em.createQuery(findHomeTeamNames, Game.class)
+                .setHint("jakarta.persistence.fetchgraph", graph)
+                .setParameter("year", year)
+                .getResultList();
+        return games;
     }
 }

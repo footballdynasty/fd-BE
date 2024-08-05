@@ -1,6 +1,7 @@
 package com.critchlow.footballdynasty.controllers;
 
 import com.critchlow.footballdynasty.dtos.GameDto;
+import com.critchlow.footballdynasty.dtos.UpdateStandings;
 import com.critchlow.footballdynasty.mappers.ScheduleMapper;
 import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.services.ScheduleService;
@@ -54,6 +55,13 @@ public class ScheduleController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/updateStandings")
+    public HttpEntity<?> updateStandings(@RequestBody UpdateStandings updateStandings){
+        scheduleService.updateStandingsForUserTeams(updateStandings.year);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 //
 //    @DeleteMapping("/deleteGame")
 //    public HttpEntity<Object> createAchievement(@RequestParam UUID id) {

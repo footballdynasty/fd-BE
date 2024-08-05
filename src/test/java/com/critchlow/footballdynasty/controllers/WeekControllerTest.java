@@ -4,6 +4,7 @@ import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.model.Week;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.GameRepository;
+import com.critchlow.footballdynasty.repository.WeekRepository;
 import com.critchlow.footballdynasty.services.ScheduleService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -43,6 +45,8 @@ public class WeekControllerTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
             "postgres:16-alpine"
     );
+    @Autowired
+    private WeekRepository weekRepository;
 
     @BeforeAll
     static void beforeAll() {
@@ -76,7 +80,7 @@ public class WeekControllerTest {
         List<Game> games = new ArrayList<>();
         games.add(game1);
         games.add(game2);
-        when(gameRepository.findGames()).thenReturn(games);
+        when(gameRepository.findGamesByYear(2024)).thenReturn(games);
 
         //Then
         String expectedResponse = String.format(
@@ -100,7 +104,7 @@ public class WeekControllerTest {
         Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, week);
 
         //When
-        when(gameRepository.findGames()).thenReturn(List.of(game1, game2));
+        when(gameRepository.findGamesByYear(2024)).thenReturn(List.of(game1, game2));
 
         //Then
         String expectedResponse = String.format(
@@ -124,8 +128,7 @@ public class WeekControllerTest {
         Game game2 = createGame(team2, team1, Date.valueOf("2024-01-02"), 0, 0, week);
 
         //When
-        when(gameRepository.findGames()).thenReturn(List.of(game1, game2));
-
+        when(gameRepository.findGamesByYear(2024)).thenReturn(List.of(game1, game2));
         //Then
         String expectedResponse = "[]";
 
@@ -167,7 +170,7 @@ public class WeekControllerTest {
         testWeek.id = weekId;
         testWeek.year = year;
         testWeek.weekNumber = weekNumber;
-
+        weekRepository.save(testWeek);
         return testWeek;
     }
 }
