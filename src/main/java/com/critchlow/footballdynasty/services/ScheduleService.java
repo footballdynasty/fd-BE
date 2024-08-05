@@ -1,5 +1,6 @@
 package com.critchlow.footballdynasty.services;
 
+import com.critchlow.footballdynasty.dtos.WinsLosses;
 import com.critchlow.footballdynasty.model.*;
 import com.critchlow.footballdynasty.repository.GameRepository;
 import com.critchlow.footballdynasty.repository.StandingsRepository;
@@ -13,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ScheduleService {
@@ -35,11 +39,11 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<Game> getSchedule(Integer year) {
         if(year == null || year == 0){
-            int largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(LocalDateTime.now().getYear());
+            Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(LocalDateTime.now().getYear());
             List<Game> games = gameRepository.findGamesByYear(LocalDateTime.now().getYear());
             return games.stream().filter(g -> g.week.weekNumber == largesWeekNumberForCurrentYear).sorted(new GameComparator()).toList();
         }
-        int largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(year);
+        Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(year);
         List<Game> games =  gameRepository.findGamesByYear(year);
         return games.stream().filter(g -> g.week.weekNumber == largesWeekNumberForCurrentYear).sorted(new GameComparator()).toList();
     }
@@ -50,10 +54,12 @@ public class ScheduleService {
         return team;
     }
 
+    @Transactional
     public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year, int weekNumber) {
         return createGame(homeTeamName, awayTeamName, startDate, year, weekNumber, 0, 0);
     }
 
+    @Transactional
     public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year, int weekNumber, int homeScore, int awayScore) {
         Team homeTeam = teamRepository.findTeamByName(homeTeamName);
         Team awayTeam =  teamRepository.findTeamByName(awayTeamName);
@@ -92,53 +98,48 @@ public class ScheduleService {
         game.awayScore = awayScore;
         game.createGameId();
         Game insertedGame = gameRepository.save(game);
-        updateStandings(insertedGame);
+        updateStandingsForUserTeams(year);
         return insertedGame;
     }
 
-    private void updateStandings(Game insertedGame) {
-        List<Game> games = gameRepository.findGamesByYear(insertedGame.week.year);
-        List<Game> homeTeamGames = games.stream()
-                .filter(g -> g.homeTeam == insertedGame.homeTeam)
-                .toList();
-        List<Game> awayTeamGames = games.stream()
-                .filter(g -> g.awayTeam == insertedGame.awayTeam)
-                .toList();
-
-        int homeTeamWins = 0;
-        int awayTeamWins = 0;
-        int homeTeamLosses = 0;
-        int awayTeamLosses = 0;
-
-        for (Game game : homeTeamGames) {
-            if (game.homeScore > game.awayScore) {
-                homeTeamWins++;
-            } else if (game.homeScore < game.awayScore) {
-                homeTeamLosses++;
+    @Transactional
+    public void updateStandingsForUserTeams(int year){
+        List<Game> games = gameRepository.findUserTeams(year);
+        Map<Optional<Team>, List<Game>> mapUserTeams = games.stream()
+                .collect(Collectors.groupingBy(Game::withUserCoach));
+        mapUserTeams.forEach((k,v) -> {
+            WinsLosses winsLosses = new WinsLosses();
+            if(k.isEmpty()){
+                return;
             }
-        }
-        for (Game game : awayTeamGames) {
-            if (game.awayScore > game.homeScore) {
-                awayTeamWins++;
-            } else if (game.awayScore < game.homeScore) {
-                awayTeamLosses++;
+            for(Game g : v){
+                if(g.homeTeam.equals(k.get())){
+                    if(g.homeScore > g.awayScore){
+                        winsLosses.teamWins++;
+                    } else if(g.awayScore > g.homeScore){
+                        winsLosses.teamLosses++;
+                    }
+                } else {
+                    if(g.awayScore > g.homeScore){
+                        winsLosses.teamWins++;
+                    } else if(g.awayScore < g.homeScore){
+                        winsLosses.teamLosses++;
+                    }
+                }
             }
-        }
 
-        Standings homeTeamStandings = standingsRepository.findByTeamNameAndYear(insertedGame.homeTeam.name, insertedGame.week.year);
-        Standings awayTeamStandings = standingsRepository.findByTeamNameAndYear(insertedGame.awayTeam.name, insertedGame.week.year);
-        if(homeTeamStandings != null){
-            homeTeamStandings.wins = homeTeamWins;
-            homeTeamStandings.losses = homeTeamLosses;
-            standingsRepository.save(homeTeamStandings);
-        }
-        if(awayTeamStandings != null){
-            awayTeamStandings.wins = awayTeamWins;
-            awayTeamStandings.losses = awayTeamLosses;
-            standingsRepository.save(awayTeamStandings);
-        }
+            saveStandings(k.get(), year, winsLosses);
+        });
     }
 
+    private void saveStandings(Team userTeam, int year,  WinsLosses winsLosses) {
+        Standings userTeamStandings = standingsRepository.findByTeamNameAndYear(userTeam.name, year);
+        userTeamStandings.wins = winsLosses.teamWins;
+        userTeamStandings.losses = winsLosses.teamLosses;
+        standingsRepository.save(userTeamStandings);
+    }
+
+    @Transactional
     public void updateGame(String gameId, int homeScore, int awayScore) {
         Game gameFound = gameRepository.findGameById(gameId);
         if (gameFound == null) {
@@ -147,7 +148,7 @@ public class ScheduleService {
         gameFound.homeScore = homeScore;
         gameFound.awayScore = awayScore;
         gameRepository.save(gameFound);
-        updateStandings(gameFound);
+        updateStandingsForUserTeams(gameFound.week.year);
     }
 
 //    public void deleteGame(UUID id) {

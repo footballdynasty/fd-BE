@@ -8,4 +8,5 @@ public interface CustomGameRepository {
     List<Game> findGames();
     List<Game> findGamesByYear(int year);
     Game findGameById(String gameId);
+    List<Game> findUserTeams(int year);
 }

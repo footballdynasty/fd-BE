@@ -11,5 +11,5 @@ public interface WeekRepository extends JpaRepository<Week, UUID> {
     Week findWeekByWeekNumber(int weekNumber);
 
     @Query("SELECT max(week.weekNumber) from Week week where week.year = :year")
-    int findLargestWeekNumberByYear(int year);
+    Integer findLargestWeekNumberByYear(int year);
 }
