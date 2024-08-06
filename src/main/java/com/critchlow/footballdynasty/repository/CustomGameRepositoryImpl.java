@@ -16,7 +16,7 @@ public class CustomGameRepositoryImpl implements CustomGameRepository {
         String findGamesQuery = """
                 SELECT game FROM Game game
                 """;
-        EntityGraph graph = em.getEntityGraph("gameWithWeek");
+        EntityGraph<?> graph = em.getEntityGraph("gameWithWeek");
         List<Game> games = em.createQuery(findGamesQuery, Game.class)
                 .setHint("jakarta.persistence.fetchgraph", graph)
                 .getResultList();
@@ -28,7 +28,7 @@ public class CustomGameRepositoryImpl implements CustomGameRepository {
         String findGamesQuery = """
                 SELECT game FROM Game game where game.week.year = :year
                 """;
-        EntityGraph graph = em.getEntityGraph("gameWithWeek");
+        EntityGraph<?> graph = em.getEntityGraph("gameWithWeek");
         List<Game> games = em.createQuery(findGamesQuery, Game.class)
                 .setHint("jakarta.persistence.fetchgraph", graph)
                 .setParameter("year", year)
