@@ -2,9 +2,16 @@ package com.critchlow.footballdynasty.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
+//@NamedEntityGraphs({
+//        @NamedEntityGraph(name = "teamWithGame",
+//                attributeNodes = {
+//                        @NamedAttributeNode("games"),
+//                }),
+//})
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
