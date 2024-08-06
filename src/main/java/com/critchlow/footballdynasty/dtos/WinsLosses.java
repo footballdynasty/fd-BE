@@ -1,6 +1,10 @@
 package com.critchlow.footballdynasty.dtos;
 
+import lombok.Data;
+
+@Data
 public class WinsLosses {
-    public int teamWins;
-    public int teamLosses;
+    private int teamWins = 0;
+    private int teamLosses = 0;
+
 }

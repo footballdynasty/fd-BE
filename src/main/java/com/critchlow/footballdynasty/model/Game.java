@@ -42,15 +42,23 @@ public class Game {
     public Week week;
 
     public void createGameId(){
-        String gameId = homeTeam.name + awayTeam.name + week.year + week.weekNumber;
-        this.gameId = gameId.replaceAll("\\s+", "");
+        String newGameId = homeTeam.name + awayTeam.name + week.year + week.weekNumber;
+        this.gameId = newGameId.replaceAll("\\s+", "");
+    }
+
+    public static String createGameId(String homeTeamName, String awayTeamName, int year, int weekNumber){
+        String gameId = homeTeamName + awayTeamName + year + weekNumber;
+        return gameId.replaceAll("\\s+", "");
     }
 
     public Optional<Team> withUserCoach(){
-        return homeTeam.coach != null
-                ? Optional.of(homeTeam)
-                : awayTeam.coach != null
-                ? Optional.of(awayTeam) : Optional.empty();
+        if(homeTeam.coach != null){
+            return Optional.of(homeTeam);
+        } else if(awayTeam.coach != null){
+            return Optional.of(awayTeam);
+        } else {
+            return Optional.empty();
+        }
     }
     public String getAwayTeam(){
         return awayTeam.name;
