@@ -1,11 +1,14 @@
 package com.critchlow.footballdynasty.controllers;
 
+import com.critchlow.footballdynasty.dtos.CreateGameDto;
 import com.critchlow.footballdynasty.dtos.GameDto;
+import com.critchlow.footballdynasty.dtos.UpdateGameDto;
 import com.critchlow.footballdynasty.dtos.UpdateStandings;
 import com.critchlow.footballdynasty.mappers.ScheduleMapper;
 import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.services.ScheduleService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -34,6 +37,7 @@ public class ScheduleController {
     }
 
     @PostMapping("/createGame")
+    @Transactional
     public HttpEntity<Object> createGame(@RequestParam String homeTeamName, @RequestParam String awayTeamName, @RequestParam String date, @RequestParam int year, @RequestParam int weekNumber, @RequestParam(required = false) Integer homeScore, @RequestParam(required = false) Integer awayScore) {
         if(homeScore == null){
             homeScore = 0;
@@ -45,7 +49,24 @@ public class ScheduleController {
         return new ResponseEntity<>(game, HttpStatus.OK);
     }
 
+    @PostMapping("/createGames")
+    @Transactional
+    public HttpEntity<Object> createGames(@RequestBody List<CreateGameDto> games) {
+        for (CreateGameDto game : games) {
+            if(game.homeScore == null){
+                game.homeScore = 0;
+            }
+            if(game.awayScore == null){
+                game.awayScore = 0;
+            }
+
+            scheduleService.createGame(game.homeTeamName, game.awayTeamName, game.date, game.year, game.weekNumber, game.homeScore, game.awayScore);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/updateGame")
+    @Transactional
     public HttpEntity<Object> updateGame(@RequestParam String gameId, @RequestParam int homeScore, @RequestParam int awayScore) {
         try {
             scheduleService.updateGame(gameId, homeScore, awayScore);
@@ -56,7 +77,21 @@ public class ScheduleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/updateGames")
+    @Transactional
+    public HttpEntity<Object> updateGames(@RequestBody List<UpdateGameDto> games) {
+        for (UpdateGameDto game : games) {
+            try {
+                scheduleService.updateGame(game.homeTeamName, game.awayTeamName, game.year, game.weekNumber, game.homeScore, game.awayScore);
+            } catch (EntityNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/updateStandings")
+    @Transactional
     public HttpEntity<?> updateStandings(@RequestBody UpdateStandings updateStandings){
         scheduleService.updateStandingsForUserTeams(updateStandings.year);
         return new ResponseEntity<>(HttpStatus.OK);

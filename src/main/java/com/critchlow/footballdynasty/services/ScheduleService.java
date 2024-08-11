@@ -26,7 +26,7 @@ public class ScheduleService {
     private final WeekRepository weekRepository;
     private final StandingsRepository standingsRepository;
 
-    private static final String placeholderImage = "https://upload.wikimedia.org/wikipedia/commons/6/6f/EA_Sports_monochrome_logo.svg";
+    private static final String PLACEHOLDER_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/6/6f/EA_Sports_monochrome_logo.svg";
 
     @Autowired
     public ScheduleService(GameRepository gameRepository, TeamRepository teamRepository, WeekRepository weekRepository, StandingsRepository standingsRepository) {
@@ -54,12 +54,10 @@ public class ScheduleService {
         return team;
     }
 
-    @Transactional
     public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year, int weekNumber) {
         return createGame(homeTeamName, awayTeamName, startDate, year, weekNumber, 0, 0);
     }
 
-    @Transactional
     public Game createGame(String homeTeamName, String awayTeamName, String startDate, int year, int weekNumber, int homeScore, int awayScore) {
         Team homeTeam = teamRepository.findTeamByName(homeTeamName);
         Team awayTeam =  teamRepository.findTeamByName(awayTeamName);
@@ -68,7 +66,7 @@ public class ScheduleService {
             homeTeam = new Team();
             homeTeam.name = homeTeamName;
             homeTeam.isHuman = false;
-            homeTeam.imageUrl = placeholderImage;
+            homeTeam.imageUrl = PLACEHOLDER_IMAGE;
             teamRepository.save(homeTeam);
         }
 
@@ -76,7 +74,7 @@ public class ScheduleService {
             awayTeam = new Team();
             awayTeam.name = awayTeamName;
             awayTeam.isHuman = false;
-            awayTeam.imageUrl = placeholderImage;
+            awayTeam.imageUrl = PLACEHOLDER_IMAGE;
             teamRepository.save(awayTeam);
         }
 
@@ -102,41 +100,67 @@ public class ScheduleService {
         return insertedGame;
     }
 
-    @Transactional
     public void updateStandingsForUserTeams(int year){
         List<Game> games = gameRepository.findUserTeams(year);
         Map<Optional<Team>, List<Game>> mapUserTeams = games.stream()
                 .collect(Collectors.groupingBy(Game::withUserCoach));
         mapUserTeams.forEach((k,v) -> {
-            WinsLosses winsLosses = new WinsLosses();
             if(k.isEmpty()){
                 return;
             }
-            for(Game g : v){
-                if(g.homeTeam.equals(k.get())){
-                    if(g.homeScore > g.awayScore){
-                        winsLosses.teamWins++;
-                    } else if(g.awayScore > g.homeScore){
-                        winsLosses.teamLosses++;
-                    }
-                } else {
-                    if(g.awayScore > g.homeScore){
-                        winsLosses.teamWins++;
-                    } else if(g.awayScore < g.homeScore){
-                        winsLosses.teamLosses++;
-                    }
-                }
+            WinsLosses winsLosses = getWinsLosses(k, v);
+            if (winsLosses == null) {
+                return;
             }
 
             saveStandings(k.get(), year, winsLosses);
         });
     }
 
+    public static WinsLosses getWinsLosses(Optional<Team> k, List<Game> v) {
+        WinsLosses winsLosses = new WinsLosses();
+        if(k.isEmpty()){
+            return null;
+        }
+        for(Game g : v){
+            if(g.homeTeam.equals(k.get())){
+                if(g.homeScore > g.awayScore){
+                    int teamWins = winsLosses.getTeamWins();
+                    winsLosses.setTeamWins(teamWins + 1);
+                } else if(g.awayScore > g.homeScore){
+                    int teamLosses = winsLosses.getTeamLosses();
+                    winsLosses.setTeamLosses(teamLosses + 1);
+                }
+            } else {
+                if(g.awayScore > g.homeScore){
+                    int teamWins = winsLosses.getTeamWins();
+                    winsLosses.setTeamWins(teamWins + 1);
+                } else if(g.awayScore < g.homeScore){
+                    int teamLosses = winsLosses.getTeamLosses();
+                    winsLosses.setTeamLosses(teamLosses + 1);
+                }
+            }
+        }
+        return winsLosses;
+    }
+
     private void saveStandings(Team userTeam, int year,  WinsLosses winsLosses) {
         Standings userTeamStandings = standingsRepository.findByTeamNameAndYear(userTeam.name, year);
-        userTeamStandings.wins = winsLosses.teamWins;
-        userTeamStandings.losses = winsLosses.teamLosses;
+        userTeamStandings.wins = winsLosses.getTeamWins();
+        userTeamStandings.losses = winsLosses.getTeamLosses();
         standingsRepository.save(userTeamStandings);
+    }
+
+    public void updateGame(String homeTeamName, String awayTeamName, int year, int weekNumber,int homeScore,int awayScore) {
+        String gameId = Game.createGameId(homeTeamName, awayTeamName, year, weekNumber);
+        Game gameFound = gameRepository.findGameById(gameId);
+        if (gameFound == null) {
+            throw new EntityNotFoundException("Game with id " + gameId + " not found");
+        }
+        gameFound.homeScore = homeScore;
+        gameFound.awayScore = awayScore;
+        gameRepository.save(gameFound);
+        updateStandingsForUserTeams(gameFound.week.year);
     }
 
     @Transactional
@@ -149,6 +173,10 @@ public class ScheduleService {
         gameFound.awayScore = awayScore;
         gameRepository.save(gameFound);
         updateStandingsForUserTeams(gameFound.week.year);
+    }
+
+    public String generateGameId(String homeTeamName, String awayTeamName, int year, int weekNumber) {
+        return homeTeamName + awayTeamName + year + weekNumber;
     }
 
 //    public void deleteGame(UUID id) {

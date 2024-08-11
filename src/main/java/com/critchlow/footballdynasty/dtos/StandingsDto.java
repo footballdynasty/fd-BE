@@ -1,9 +1,10 @@
 package com.critchlow.footballdynasty.dtos;
 
-import com.critchlow.footballdynasty.model.Team;
+import lombok.Data;
 
 import java.util.UUID;
 
+@Data
 public class StandingsDto {
     public UUID id;
     public TeamDto team;
