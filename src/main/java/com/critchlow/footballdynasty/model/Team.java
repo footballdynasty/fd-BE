@@ -2,6 +2,7 @@ package com.critchlow.footballdynasty.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -28,5 +29,21 @@ public class Team {
     }
 
     public Team() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Team team)) {
+            return false;
+        }
+	    return isHuman == team.isHuman && Objects.equals(name, team.name) && Objects.equals(coach, team.coach) && Objects.equals(conference, team.conference) && Objects.equals(imageUrl, team.imageUrl) && Objects.equals(username, team.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, coach, conference, imageUrl, isHuman, username);
     }
 }
