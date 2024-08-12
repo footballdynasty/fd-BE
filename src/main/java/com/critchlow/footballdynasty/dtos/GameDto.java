@@ -9,8 +9,8 @@ import java.util.UUID;
 @Data
 public class GameDto {
     public UUID id;
-    public Team homeTeam;
-    public Team awayTeam;
+    public TeamDto homeTeam;
+    public TeamDto awayTeam;
     public Date date;
     public int homeScore;
     public int awayScore;
