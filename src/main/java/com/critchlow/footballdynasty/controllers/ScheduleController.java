@@ -8,6 +8,7 @@ import com.critchlow.footballdynasty.mappers.ScheduleMapper;
 import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.services.ScheduleService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -80,11 +81,20 @@ public class ScheduleController {
     @PostMapping("/updateGames")
     @Transactional
     public HttpEntity<Object> updateGames(@RequestBody List<UpdateGameDto> games) {
+        if(games == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(games.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(games.stream().anyMatch(g -> g.homeTeamName == null || g.awayTeamName == null || g.year == 0 || g.weekNumber == 0)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         for (UpdateGameDto game : games) {
             try {
                 scheduleService.updateGame(game.homeTeamName, game.awayTeamName, game.year, game.weekNumber, game.homeScore, game.awayScore);
-            } catch (EntityNotFoundException e) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } catch (EntityNotFoundException | NoResultException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
             }
         }
         return new ResponseEntity<>(HttpStatus.OK);

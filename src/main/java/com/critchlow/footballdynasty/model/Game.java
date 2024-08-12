@@ -15,7 +15,7 @@ import java.util.UUID;
                         @NamedAttributeNode("homeTeam"),
                         @NamedAttributeNode("awayTeam")
 
-                }),
+                })
 })
 public class Game {
     @Id
@@ -49,18 +49,5 @@ public class Game {
     public static String createGameId(String homeTeamName, String awayTeamName, int year, int weekNumber){
         String gameId = homeTeamName + awayTeamName + year + weekNumber;
         return gameId.replaceAll("\\s+", "");
-    }
-
-    public Optional<Team> withUserCoach(){
-        if(homeTeam.coach != null){
-            return Optional.of(homeTeam);
-        } else if(awayTeam.coach != null){
-            return Optional.of(awayTeam);
-        } else {
-            return Optional.empty();
-        }
-    }
-    public String getAwayTeam(){
-        return awayTeam.name;
     }
 }
