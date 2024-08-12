@@ -1,6 +1,7 @@
 package com.critchlow.footballdynasty.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,8 +32,10 @@ public class Team {
     @JoinColumn(name = "is_human")
     public boolean isHuman;
     public String username;
+    @Getter
     @OneToMany(mappedBy = "homeTeam")
     public List<Game> homeGames;
+    @Getter
     @OneToMany(mappedBy = "awayTeam")
     public List<Game> awayGames;
 
@@ -56,11 +59,18 @@ public class Team {
         if (!(o instanceof Team team)) {
             return false;
         }
-	    return isHuman == team.isHuman && Objects.equals(name, team.name) && Objects.equals(coach, team.coach) && Objects.equals(conference, team.conference) && Objects.equals(imageUrl, team.imageUrl) && Objects.equals(username, team.username);
+	    return isHuman == team.isHuman
+                && Objects.equals(name, team.name)
+                && Objects.equals(coach, team.coach)
+                && Objects.equals(conference, team.conference)
+                && Objects.equals(imageUrl, team.imageUrl)
+                && Objects.equals(username, team.username)
+                && Objects.equals(homeGames, team.getHomeGames())
+                && Objects.equals(awayGames, team.getAwayGames());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, coach, conference, imageUrl, isHuman, username);
+        return Objects.hash(name, coach, conference, imageUrl, isHuman, username, getHomeGames(), getAwayGames());
     }
 }

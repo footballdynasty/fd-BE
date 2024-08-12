@@ -23,6 +23,9 @@ public class StandingsMapper {
             teamDto.name = standing.team.name;
             teamDto.coach = standing.team.coach;
             teamDto.conference = standing.team.conference;
+            teamDto.imageUrl = standing.team.imageUrl;
+            teamDto.username = standing.team.username;
+            teamDto.isHuman = standing.team.isHuman;
             standingsDto.team = teamDto;
             standingsDtos.add(standingsDto);
         }
