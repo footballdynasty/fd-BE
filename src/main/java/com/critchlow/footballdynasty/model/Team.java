@@ -2,9 +2,22 @@ package com.critchlow.footballdynasty.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@NamedEntityGraphs({
+    @NamedEntityGraph(name = "teamWithHomeGames",
+            attributeNodes = {
+                    @NamedAttributeNode("homeGames"),
+
+            }),
+    @NamedEntityGraph(name = "teamWithAwayGames",
+            attributeNodes = {
+                    @NamedAttributeNode("awayGames")
+
+            }),
+})
 @Entity
 public class Team {
     @Id
@@ -18,6 +31,10 @@ public class Team {
     @JoinColumn(name = "is_human")
     public boolean isHuman;
     public String username;
+    @OneToMany(mappedBy = "homeTeam")
+    public List<Game> homeGames;
+    @OneToMany(mappedBy = "awayTeam")
+    public List<Game> awayGames;
 
     public Team(String id, String name, String coach, String conference, String imageUrl, boolean isHuman) {
         this.id = UUID.fromString(id);

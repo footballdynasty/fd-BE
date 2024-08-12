@@ -7,6 +7,7 @@ import com.critchlow.footballdynasty.repository.StandingsRepository;
 import com.critchlow.footballdynasty.repository.WeekRepository;
 import com.critchlow.footballdynasty.repository.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ScheduleService {
@@ -101,20 +100,38 @@ public class ScheduleService {
     }
 
     public void updateStandingsForUserTeams(int year){
-        List<Game> games = gameRepository.findUserTeams(year);
-        Map<Optional<Team>, List<Game>> mapUserTeams = games.stream()
-                .collect(Collectors.groupingBy(Game::withUserCoach));
-        mapUserTeams.forEach((k,v) -> {
-            if(k.isEmpty()){
-                return;
-            }
-            WinsLosses winsLosses = getWinsLosses(k, v);
-            if (winsLosses == null) {
-                return;
-            }
-
-            saveStandings(k.get(), year, winsLosses);
+        List<Team> userTeams = teamRepository.findUserTeams();
+        userTeams.forEach(t -> {
+            WinsLosses teamWinsLosses = getWinsLosses(t);
+            saveStandings(t, year, teamWinsLosses);
         });
+    }
+
+    public static WinsLosses getWinsLosses(Team userTeam){
+        WinsLosses winsLosses = new WinsLosses();
+        if(userTeam.homeGames != null && !userTeam.homeGames.isEmpty()){
+            for(Game g : userTeam.homeGames){
+                if(g.homeScore > g.awayScore){
+                    int teamWins = winsLosses.getTeamWins();
+                    winsLosses.setTeamWins(teamWins + 1);
+                } else if(g.awayScore > g.homeScore){
+                    int teamLosses = winsLosses.getTeamLosses();
+                    winsLosses.setTeamLosses(teamLosses + 1);
+                }
+            }
+        }
+        if(userTeam.awayGames != null && !userTeam.awayGames.isEmpty()) {
+            for (Game g : userTeam.awayGames) {
+                if (g.awayScore > g.homeScore) {
+                    int teamWins = winsLosses.getTeamWins();
+                    winsLosses.setTeamWins(teamWins + 1);
+                } else if (g.awayScore < g.homeScore) {
+                    int teamLosses = winsLosses.getTeamLosses();
+                    winsLosses.setTeamLosses(teamLosses + 1);
+                }
+            }
+        }
+        return winsLosses;
     }
 
     public static WinsLosses getWinsLosses(Optional<Team> k, List<Game> v) {
@@ -153,30 +170,30 @@ public class ScheduleService {
 
     public void updateGame(String homeTeamName, String awayTeamName, int year, int weekNumber,int homeScore,int awayScore) {
         String gameId = Game.createGameId(homeTeamName, awayTeamName, year, weekNumber);
-        Game gameFound = gameRepository.findGameById(gameId);
-        if (gameFound == null) {
-            throw new EntityNotFoundException("Game with id " + gameId + " not found");
+        try {
+            Game gameFound = gameRepository.findGameById(gameId);
+            if(gameFound == null){
+                throw new NoResultException("Game with id " + gameId + " not found");
+            }
+            gameFound.homeScore = homeScore;
+            gameFound.awayScore = awayScore;
+            gameRepository.save(gameFound);
+            updateStandingsForUserTeams(gameFound.week.year);
+        } catch (NoResultException e) {
+            throw new NoResultException("Game with id " + gameId + " not found");
         }
-        gameFound.homeScore = homeScore;
-        gameFound.awayScore = awayScore;
-        gameRepository.save(gameFound);
-        updateStandingsForUserTeams(gameFound.week.year);
     }
 
-    @Transactional
     public void updateGame(String gameId, int homeScore, int awayScore) {
-        Game gameFound = gameRepository.findGameById(gameId);
-        if (gameFound == null) {
+        try {
+            Game gameFound = gameRepository.findGameById(gameId);
+            gameFound.homeScore = homeScore;
+            gameFound.awayScore = awayScore;
+            gameRepository.save(gameFound);
+            updateStandingsForUserTeams(gameFound.week.year);
+        } catch (NoResultException e) {
             throw new EntityNotFoundException("Game with id " + gameId + " not found");
         }
-        gameFound.homeScore = homeScore;
-        gameFound.awayScore = awayScore;
-        gameRepository.save(gameFound);
-        updateStandingsForUserTeams(gameFound.week.year);
-    }
-
-    public String generateGameId(String homeTeamName, String awayTeamName, int year, int weekNumber) {
-        return homeTeamName + awayTeamName + year + weekNumber;
     }
 
 //    public void deleteGame(UUID id) {
