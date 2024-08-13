@@ -131,30 +131,30 @@ public class ScheduleService {
                 }
             }
         }
+        winsLosses = getConferenceWinsLosses(userTeam, winsLosses);
         return winsLosses;
     }
 
-    public static WinsLosses getWinsLosses(Optional<Team> k, List<Game> v) {
-        WinsLosses winsLosses = new WinsLosses();
-        if(k.isEmpty()){
-            return null;
-        }
-        for(Game g : v){
-            if(g.homeTeam.equals(k.get())){
-                if(g.homeScore > g.awayScore){
-                    int teamWins = winsLosses.getTeamWins();
-                    winsLosses.setTeamWins(teamWins + 1);
-                } else if(g.awayScore > g.homeScore){
-                    int teamLosses = winsLosses.getTeamLosses();
-                    winsLosses.setTeamLosses(teamLosses + 1);
+    public static WinsLosses getConferenceWinsLosses(Team userTeam, WinsLosses winsLosses) {
+        for(Game g : userTeam.homeGames){
+            if(g.homeTeam.conference.equals(g.awayTeam.conference)) {
+                if (g.homeScore > g.awayScore) {
+                    int teamConferenceWins = winsLosses.getTeamConferenceWins();
+                    winsLosses.setTeamConferenceWins(teamConferenceWins + 1);
+                } else if (g.homeScore < g.awayScore) {
+                    int teamConferenceLosses = winsLosses.getTeamConferenceLosses();
+                    winsLosses.setTeamConferenceLosses(teamConferenceLosses + 1);
                 }
-            } else {
-                if(g.awayScore > g.homeScore){
-                    int teamWins = winsLosses.getTeamWins();
-                    winsLosses.setTeamWins(teamWins + 1);
-                } else if(g.awayScore < g.homeScore){
-                    int teamLosses = winsLosses.getTeamLosses();
-                    winsLosses.setTeamLosses(teamLosses + 1);
+            }
+        }
+        for(Game g : userTeam.awayGames){
+            if(g.awayTeam.conference.equals(g.homeTeam.conference)) {
+                if (g.awayScore > g.homeScore) {
+                    int teamConferenceWins = winsLosses.getTeamConferenceWins();
+                    winsLosses.setTeamConferenceWins(teamConferenceWins + 1);
+                } else if (g.awayScore < g.homeScore) {
+                    int teamConferenceLosses = winsLosses.getTeamConferenceLosses();
+                    winsLosses.setTeamConferenceLosses(teamConferenceLosses + 1);
                 }
             }
         }
@@ -165,6 +165,8 @@ public class ScheduleService {
         Standings userTeamStandings = standingsRepository.findByTeamNameAndYear(userTeam.name, year);
         userTeamStandings.wins = winsLosses.getTeamWins();
         userTeamStandings.losses = winsLosses.getTeamLosses();
+        userTeamStandings.conference_wins = winsLosses.getTeamConferenceWins();
+        userTeamStandings.conference_losses = winsLosses.getTeamConferenceLosses();
         standingsRepository.save(userTeamStandings);
     }
 

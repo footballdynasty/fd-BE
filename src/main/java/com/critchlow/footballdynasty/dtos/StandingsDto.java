@@ -11,6 +11,8 @@ public class StandingsDto {
     public int year;
     public int wins;
     public int losses;
+    public int conference_wins;
+    public int conference_losses;
     public Integer rank;
     public Integer receiving_votes;
 }

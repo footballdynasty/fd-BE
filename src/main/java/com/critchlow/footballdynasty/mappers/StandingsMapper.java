@@ -16,6 +16,8 @@ public class StandingsMapper {
             standingsDto.year = standing.year;
             standingsDto.wins = standing.wins;
             standingsDto.losses = standing.losses;
+            standingsDto.conference_wins = standing.conference_wins;
+            standingsDto.conference_losses = standing.conference_losses;
             standingsDto.rank = standing.rank;
             standingsDto.receiving_votes = standing.receiving_votes;
             TeamDto teamDto = new TeamDto();

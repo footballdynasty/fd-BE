@@ -45,45 +45,55 @@ class ScheduleServiceTests {
 	@Test
 	void getWinsLosses_WithTwoUserTeams_ReturnsCorrectly(){
 		// Given
-		Game game1 = createGame(true, "Team1", 14, true, "AwayTeam1", 7, 1);
-		Game game2 = createGame(true, "Team1", 7, false, "AwayTeam2", 14,2);
-		Game game3 = createGame(false, "AwayTeam3", 27, true, "Team1", 14,3);
-		Game game4 = createGame(true, "AwayTeam4", 10, true, "Team1", 14,4);
-		List<Game> games = new ArrayList<>();
-		games.add(game1);
-		games.add(game2);
-		games.add(game3);
-		games.add(game4);
+		Team userTeam1 = createTeam(true, "HomeTeam", "conference1");
+		Team userTeam2 = createTeam(true, "AwayTeam", "conference1");
+		Team computer1 = createTeam(false, "Computer1", "conference2");
+		Team computer2 = createTeam(false, "Computer2", "conference2");
+
+		Week week = createWeek(2024, 1);
+		Game game1 = createGame(userTeam1, userTeam2, 14, 7, week);
+		Game game2 = createGame(computer1, userTeam1, 7, 14, week);
+		Game game3 = createGame(userTeam1, computer2, 14, 7, week);
+
+		userTeam1.homeGames.add(game1);
+		userTeam1.awayGames.add(game2);
+		userTeam1.homeGames.add(game3);
+
 
 		// When
-		WinsLosses winsLosses = ScheduleService.getWinsLosses(Optional.of(game1.homeTeam), games);
+		WinsLosses winsLosses = ScheduleService.getWinsLosses(userTeam1);
+		winsLosses = ScheduleService.getConferenceWinsLosses(userTeam2, winsLosses);
 
 		// Then
-		assertEquals(2, winsLosses.getTeamWins(), "Team1 should have 1 win");
-		assertEquals(2, winsLosses.getTeamLosses(), "Team1 should have 1 loss");
+		assertEquals(3, winsLosses.getTeamWins(), "Team1 should have 3 wins");
+		assertEquals(0, winsLosses.getTeamLosses(), "Team1 should have 0 losses");
+		assertEquals(1, winsLosses.getTeamConferenceWins(), "Team1 should have 1 conference wins");
+		assertEquals(0, winsLosses.getTeamConferenceLosses(), "Team1 should have 0 conference losses");
 	}
 
-	private Game createGame(boolean homeTeamUser, String homeTeamName, int homeScore, boolean awayTeamUser, String awayTeamName, int awayScore, int weekNumber) {
-		Team homeTeam = new Team();
-		homeTeam.name = homeTeamName;
-		homeTeam.isHuman = homeTeamUser;
-		homeTeam.imageUrl = PLACEHOLDER_IMAGE;
+	private Week createWeek(int year, int weekNumber) {
+		Week week = new Week();
+		week.year = year;
+		week.weekNumber = weekNumber;
+		return week;
+	}
 
-		Team awayTeam = new Team();
-		awayTeam.name = awayTeamName;
-		awayTeam.isHuman = awayTeamUser;
-		awayTeam.imageUrl = PLACEHOLDER_IMAGE;
+	private Team createTeam(boolean isHuman, String name, String conference) {
+		Team team = new Team();
+		team.name = name;
+		team.isHuman = isHuman;
+		team.imageUrl = PLACEHOLDER_IMAGE;
+		team.conference = conference;
+		return team;
+	}
 
-		Week weekFound = new Week();
-		weekFound.year = LocalDateTime.now().getYear();
-		weekFound.weekNumber = weekNumber;
-
+	private Game createGame(Team homeTeam, Team awayTeam, int homeScore, int awayScore, Week week) {
 		Game game = new Game();
 		game.id = UUID.randomUUID();
 		game.homeTeam = homeTeam;
 		game.awayTeam = awayTeam;
 		game.date = Date.valueOf("2024-01-01");
-		game.week = weekFound;
+		game.week = week;
 		game.homeScore = homeScore;
 		game.awayScore = awayScore;
 		game.createGameId();
