@@ -84,7 +84,7 @@ class StandingsControllerTest {
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":false},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s},{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":false},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standings1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, 2024, 0, 0, null, null,standings2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, 2023, 0, 0, null, null)));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":false},\"year\":%s,\"wins\":%s,\"losses\":%s,\"conference_wins\":0,\"conference_losses\":0,\"rank\":%s,\"receiving_votes\":%s},{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":false},\"year\":%s,\"wins\":%s,\"losses\":%s,\"conference_wins\":0,\"conference_losses\":0,\"rank\":%s,\"receiving_votes\":%s}]",standings1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, 2024, 0, 0, null, null,standings2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, 2023, 0, 0, null, null)));
         verify(standingsRepository).findAll();
     }
 
@@ -106,7 +106,7 @@ class StandingsControllerTest {
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings?year=0"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":%s},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s},{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":%s},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standings1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, 2024, 0, 0, null, null,standings2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, 2023, 0, 0, null, null)));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":%s},\"year\":%s,\"wins\":%s,\"losses\":%s,\"conference_wins\":0,\"conference_losses\":0,\"rank\":%s,\"receiving_votes\":%s},{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":%s},\"year\":%s,\"wins\":%s,\"losses\":%s,\"conference_wins\":0,\"conference_losses\":0,\"rank\":%s,\"receiving_votes\":%s}]",standings1.id, team1.id, team1.name, team1.coach, team1.conference, team1.imageUrl, team1.isHuman, 2024, 0, 0, null, null,standings2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, 2023, 0, 0, null, null)));
         verify(standingsRepository).findAll();
     }
     @Test
@@ -127,7 +127,7 @@ class StandingsControllerTest {
         //Then
         this.mockMvc.perform(get("/api/v1.0/standings?year=2023"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":%s},\"year\":%s,\"wins\":%s,\"losses\":%s,\"rank\":%s,\"receiving_votes\":%s}]",standings2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, 2023, 0, 0, null, null)));
+                .andExpect(content().string(String.format("[{\"id\":\"%s\",\"team\":{\"id\":\"%s\",\"name\":\"%s\",\"coach\":\"%s\",\"conference\":\"%s\",\"imageUrl\":\"%s\",\"username\":\"username\",\"isHuman\":%s},\"year\":%s,\"wins\":%s,\"losses\":%s,\"conference_wins\":0,\"conference_losses\":0,\"rank\":%s,\"receiving_votes\":%s}]",standings2.id, team2.id, team2.name, team2.coach, team2.conference, team2.imageUrl, team2.isHuman, 2023, 0, 0, null, null)));
         verify(standingsRepository).findAll();
     }
 
