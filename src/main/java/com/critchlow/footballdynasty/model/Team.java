@@ -3,6 +3,7 @@ package com.critchlow.footballdynasty.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,10 +35,10 @@ public class Team {
     public String username;
     @Getter
     @OneToMany(mappedBy = "homeTeam")
-    public List<Game> homeGames;
+    public List<Game> homeGames = new ArrayList<>();
     @Getter
     @OneToMany(mappedBy = "awayTeam")
-    public List<Game> awayGames;
+    public List<Game> awayGames = new ArrayList<>();
 
     public Team(String id, String name, String coach, String conference, String imageUrl, boolean isHuman) {
         this.id = UUID.fromString(id);

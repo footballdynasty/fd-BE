@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS standings
     year INTEGER NOT NULL,
     wins INTEGER NOT NULL,
     losses INTEGER NOT NULL,
+    conference_wins INTEGER NOT NULL DEFAULT 0,
+    conference_losses INTEGER NOT NULL DEFAULT 0,
     rank INTEGER,
     receiving_votes INTEGER,
     PRIMARY KEY (id)
