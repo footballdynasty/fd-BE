@@ -1,6 +1,7 @@
 package com.critchlow.footballdynasty.services;
 
 import com.critchlow.footballdynasty.dtos.StatisticDto;
+import com.critchlow.footballdynasty.dtos.StatisticsDto;
 import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.GameRepository;
@@ -24,16 +25,23 @@ public class StatsService {
 		this.weekRepository = weekRepository;
 	}
 
-	public List<StatisticDto> calculateStatistics(Integer year){
+	public StatisticsDto calculateStatistics(Integer year){
 		if(year == null || year == 0){
-			Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(LocalDateTime.now().getYear());
-			List<Game> games = gameRepository.findGamesByWeekAndYear(largesWeekNumberForCurrentYear - 1, LocalDateTime.now().getYear());
-			return getStatisticDtos(games);
+			Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(LocalDateTime.now().getYear()) - 1;
+			List<Game> games = gameRepository.findGamesByWeekAndYear(largesWeekNumberForCurrentYear, LocalDateTime.now().getYear());
+			List<StatisticDto> statistics = getStatisticDtos(games);
+			StatisticsDto statisticsDto = new StatisticsDto();
+			statisticsDto.weekNumber = largesWeekNumberForCurrentYear;
+			statisticsDto.statistics = statistics;
+			return statisticsDto;
 		}
-		Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(year);
-		List<Game> games = gameRepository.findGamesByWeekAndYear(largesWeekNumberForCurrentYear - 1, year);
+		Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(year) - 1;
+		List<Game> games = gameRepository.findGamesByWeekAndYear(largesWeekNumberForCurrentYear, year);
 		List<StatisticDto> statistics = getStatisticDtos(games);
-		return statistics;
+		StatisticsDto statisticsDto = new StatisticsDto();
+		statisticsDto.weekNumber = largesWeekNumberForCurrentYear;
+		statisticsDto.statistics = statistics;
+		return statisticsDto;
 	}
 
 	private List<StatisticDto> getStatisticDtos(List<Game> games) {
