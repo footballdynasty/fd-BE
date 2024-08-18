@@ -1,6 +1,8 @@
-pg_dump -U u206ti558u4gvl -h caij57unh724n3.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com d4bretudoh1e1 >> fd.sql
+pg_dump -U u206ti558u4gvl -h caij57unh724n3.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com d4bretudoh1e1l >> fd.sql
 
-docker exec -i docker-compose-postgres-1 /bin/bash -c "PGPASSWORD=mysecretpassword psql --username fd_user fd_db" < fd-backup.sql
+docker exec -i docker-compose-postgres-1 /bin/bash -c "PGPASSWORD=mysecretpassword psql --username fd_user fd_db" < fd.sql
+
+Change the owner u206ti558u4gvl to fd_user in the file before running the above command
 
 --
 -- Name: achievements; Type: TABLE; Schema: public; Owner: fd_user
