@@ -83,9 +83,9 @@ public class StatsService {
 		double teamStatistic = 0;
 		double modifier = getWeightedModifier(team, game);
 		if(game.homeTeam.equals(team)){
-			teamStatistic = ((game.awayTeamRank * 5.00) + ((game.homeScore - game.awayScore) * 7.00) / 12.00) + modifier;
+			teamStatistic = ((game.awayTeamRank * 5.00) + ((game.homeScore - game.awayScore) * 7.00)) / 12.00 + modifier;
 		} else {
-			teamStatistic = ((game.homeTeamRank * 5.00) + ((game.awayScore - game.homeScore) * 7.00) / 12.00) + modifier;
+			teamStatistic = ((game.homeTeamRank * 5.00) + ((game.awayScore - game.homeScore) * 7.00)) / 12.00 + modifier;
 		}
 		return teamStatistic;
 	}
