@@ -37,6 +37,20 @@ public class CustomGameRepositoryImpl implements CustomGameRepository {
     }
 
     @Override
+    public List<Game> findGamesByWeekAndYear(int weekNumber, int year) {
+        String findGamesQuery = """
+                SELECT game FROM Game game where game.week.year = :year and game.week.weekNumber = :weekNumber
+                """;
+        EntityGraph<?> graph = em.getEntityGraph("gameWithWeek");
+        List<Game> games = em.createQuery(findGamesQuery, Game.class)
+                .setHint("jakarta.persistence.fetchgraph", graph)
+                .setParameter("year", year)
+                .setParameter("weekNumber", weekNumber)
+                .getResultList();
+        return games;
+    }
+
+    @Override
     public Game findGameById(String gameId) {
         String findGamesQuery = """
                 SELECT game FROM Game game where game.gameId=:gameId
