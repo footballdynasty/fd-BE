@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -93,7 +92,7 @@ public class ScheduleService {
         game.week = weekFound;
         game.homeScore = homeScore;
         game.awayScore = awayScore;
-        game.createGameId();
+        game.gameId = Game.createGameId(homeTeamName, awayTeamName, year, weekNumber);
         Game insertedGame = gameRepository.save(game);
         updateStandingsForUserTeams(year);
         return insertedGame;

@@ -11,7 +11,16 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public class GameTests {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class GameTests {
+	@Test
+	void gameId_createsCorrectly(){
+
+		String gameId = Game.createGameId("Bowling Green", "NC State", 2024, 9);
+		assertEquals("BowlingGreenNCState20249", gameId);
+	}
+
 	@Test
 	void equalsHashCodeContracts() {
 		Team homeTeam = new Team();
