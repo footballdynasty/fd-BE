@@ -4,9 +4,11 @@ import com.critchlow.footballdynasty.dtos.StatisticDto;
 import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.repository.GameRepository;
+import com.critchlow.footballdynasty.repository.WeekRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,20 +16,37 @@ import java.util.List;
 public class StatsService {
 
 	private final GameRepository gameRepository;
+	private final WeekRepository weekRepository;
 
 	@Autowired
-	public StatsService(GameRepository gameRepository) {
+	public StatsService(GameRepository gameRepository, WeekRepository weekRepository) {
 		this.gameRepository = gameRepository;
+		this.weekRepository = weekRepository;
 	}
 
-	public List<StatisticDto> calculateStatistics(int weekNumber, int year){
-		List<Game> games = gameRepository.findGamesByWeekAndYear(weekNumber, year);
+	public List<StatisticDto> calculateStatistics(Integer year){
+		if(year == null || year == 0){
+			Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(LocalDateTime.now().getYear());
+			List<Game> games = gameRepository.findGamesByWeekAndYear(largesWeekNumberForCurrentYear - 1, LocalDateTime.now().getYear());
+			return getStatisticDtos(games);
+		}
+		Integer largesWeekNumberForCurrentYear = weekRepository.findLargestWeekNumberByYear(year);
+		List<Game> games = gameRepository.findGamesByWeekAndYear(largesWeekNumberForCurrentYear - 1, year);
+		List<StatisticDto> statistics = getStatisticDtos(games);
+		return statistics;
+	}
+
+	private List<StatisticDto> getStatisticDtos(List<Game> games) {
 		List<StatisticDto> statistics = new ArrayList<>();
 		for(Game game : games){
-			StatisticDto homeTeam = calculateTeamStatistics(game.getHomeTeam(), game);
-			StatisticDto awayTeam = calculateTeamStatistics(game.getAwayTeam(), game);
-			statistics.add(homeTeam);
-			statistics.add(awayTeam);
+			if(game.getHomeTeam().isHuman) {
+				StatisticDto homeTeam = calculateTeamStatistics(game.getHomeTeam(), game);
+				statistics.add(homeTeam);
+			}
+			if(game.getAwayTeam().isHuman) {
+				StatisticDto awayTeam = calculateTeamStatistics(game.getAwayTeam(), game);
+				statistics.add(awayTeam);
+			}
 		}
 		return statistics;
 	}

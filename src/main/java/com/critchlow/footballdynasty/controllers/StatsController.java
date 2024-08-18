@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
@@ -23,8 +24,8 @@ public class StatsController {
 	}
 
 	@GetMapping("/statistics")
-	public ResponseEntity<Object> getStatistics(int weekNumber, int year) {
-		List<StatisticDto> games = statsService.calculateStatistics(weekNumber, year);
+	public ResponseEntity<Object> getStatistics(@RequestParam(required = false) Integer year) {
+		List<StatisticDto> games = statsService.calculateStatistics(year);
 		games.sort(Comparator.comparingDouble(StatisticDto::getTeamStatistic).reversed());
 		return ResponseEntity.ok(games);
 	}
