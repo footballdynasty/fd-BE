@@ -5,6 +5,7 @@ import com.critchlow.footballdynasty.model.Game;
 import com.critchlow.footballdynasty.model.Team;
 import com.critchlow.footballdynasty.model.Week;
 import com.critchlow.footballdynasty.repository.GameRepository;
+import com.critchlow.footballdynasty.repository.WeekRepository;
 import com.critchlow.footballdynasty.services.StatsService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,10 +22,12 @@ class StatsServiceTests {
 
 	@Mock
 	private GameRepository gameRepository;
+	@Mock
+	private WeekRepository weekRepository;
 
 	@BeforeEach
 	public void setUp() {
-		this.statsService = new StatsService(gameRepository);
+		this.statsService = new StatsService(gameRepository, weekRepository);
 	}
 
 	@Test
