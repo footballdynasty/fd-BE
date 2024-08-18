@@ -1,6 +1,7 @@
 package com.critchlow.footballdynasty.controllers;
 
 import com.critchlow.footballdynasty.dtos.StatisticDto;
+import com.critchlow.footballdynasty.dtos.StatisticsDto;
 import com.critchlow.footballdynasty.services.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,8 @@ public class StatsController {
 
 	@GetMapping("/statistics")
 	public ResponseEntity<Object> getStatistics(@RequestParam(required = false) Integer year) {
-		List<StatisticDto> games = statsService.calculateStatistics(year);
-		games.sort(Comparator.comparingDouble(StatisticDto::getTeamStatistic).reversed());
-		return ResponseEntity.ok(games);
+		StatisticsDto statistics = statsService.calculateStatistics(year);
+		statistics.statistics.sort(Comparator.comparingDouble(StatisticDto::getTeamStatistic).reversed());
+		return ResponseEntity.ok(statistics);
 	}
 }
